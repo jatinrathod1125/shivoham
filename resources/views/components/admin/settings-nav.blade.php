@@ -14,15 +14,7 @@
         class="px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all flex items-center gap-2 {{ $active === 'localization' ? 'bg-emerald-600 text-white font-bold shadow-xs' : 'text-slate-600 hover:text-slate-900 bg-white hover:bg-slate-50 border border-slate-200/80' }}"
     >
         <i data-lucide="globe" class="w-4 h-4 {{ $active === 'localization' ? 'text-white' : 'text-slate-400' }}"></i>
-        <span>Localization & Currency</span>
-    </a>
-
-    <a
-        href="{{ route('admin.settings.tax') }}"
-        class="px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all flex items-center gap-2 {{ $active === 'tax' ? 'bg-emerald-600 text-white font-bold shadow-xs' : 'text-slate-600 hover:text-slate-900 bg-white hover:bg-slate-50 border border-slate-200/80' }}"
-    >
-        <i data-lucide="calculator" class="w-4 h-4 {{ $active === 'tax' ? 'text-white' : 'text-slate-400' }}"></i>
-        <span>Tax & Pricing</span>
+        <span>Currency</span>
     </a>
 
     <a
@@ -31,14 +23,6 @@
     >
         <i data-lucide="clock" class="w-4 h-4 {{ $active === 'hours' ? 'text-white' : 'text-slate-400' }}"></i>
         <span>Operating Hours</span>
-    </a>
-
-    <a
-        href="{{ route('admin.settings.shipping') }}"
-        class="px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all flex items-center gap-2 {{ $active === 'shipping' ? 'bg-emerald-600 text-white font-bold shadow-xs' : 'text-slate-600 hover:text-slate-900 bg-white hover:bg-slate-50 border border-slate-200/80' }}"
-    >
-        <i data-lucide="truck" class="w-4 h-4 {{ $active === 'shipping' ? 'text-white' : 'text-slate-400' }}"></i>
-        <span>Shipping & Delivery Slots</span>
     </a>
 
     <a

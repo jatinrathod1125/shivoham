@@ -59,7 +59,7 @@ class AdminSettingTest extends TestCase
     }
 
     /**
-     * Test admin can update localization and currency settings.
+     * Test admin can update currency settings.
      */
     public function test_admin_can_update_localization_settings(): void
     {
@@ -71,9 +71,6 @@ class AdminSettingTest extends TestCase
             'currency_code' => 'EUR',
             'currency_symbol' => '€',
             'currency_position' => 'right',
-            'timezone' => 'Europe/London',
-            'date_format' => 'd/m/Y',
-            'time_format' => '24h',
             'decimal_separator' => '.',
             'thousands_separator' => ',',
         ]);
@@ -83,30 +80,6 @@ class AdminSettingTest extends TestCase
 
         $this->assertEquals('EUR', Setting::get('currency_code'));
         $this->assertEquals('€', Setting::get('currency_symbol'));
-    }
-
-    /**
-     * Test admin can update tax settings.
-     */
-    public function test_admin_can_update_tax_settings(): void
-    {
-        $response = $this->actingAs($this->admin)->get('/admin/settings/tax');
-        $response->assertStatus(200);
-        $response->assertSee('Taxation Calculation');
-
-        $updateResponse = $this->actingAs($this->admin)->put('/admin/settings/tax', [
-            'enable_tax' => 1,
-            'tax_rate_percentage' => '10.50',
-            'tax_calculation_type' => 'inclusive',
-            'tax_label' => 'Standard VAT',
-            'tax_number' => 'EU-VAT-123456',
-        ]);
-
-        $updateResponse->assertRedirect('/admin/settings/tax');
-        $updateResponse->assertSessionHas('toast_success');
-
-        $this->assertEquals('10.50', Setting::get('tax_rate_percentage'));
-        $this->assertEquals('inclusive', Setting::get('tax_calculation_type'));
     }
 
     /**
@@ -141,33 +114,6 @@ class AdminSettingTest extends TestCase
     }
 
     /**
-     * Test admin can update shipping & delivery slots settings.
-     */
-    public function test_admin_can_update_shipping_settings(): void
-    {
-        $response = $this->actingAs($this->admin)->get('/admin/settings/shipping');
-        $response->assertStatus(200);
-        $response->assertSee('Delivery Fees');
-        $response->assertSee('Delivery Time Window Slots');
-
-        $updateResponse = $this->actingAs($this->admin)->put('/admin/settings/shipping', [
-            'free_shipping_threshold' => '50.00',
-            'default_shipping_fee' => '5.99',
-            'express_shipping_fee' => '12.99',
-            'delivery_slots' => ['09:00 - 12:00', '13:00 - 16:00', '17:00 - 20:00'],
-            'max_orders_per_slot' => 30,
-            'slot_cutoff_minutes' => 45,
-        ]);
-
-        $updateResponse->assertRedirect('/admin/settings/shipping');
-        $updateResponse->assertSessionHas('toast_success');
-
-        $this->assertEquals('50.00', Setting::get('free_shipping_threshold'));
-        $this->assertEquals(30, Setting::get('max_orders_per_slot'));
-        $this->assertCount(3, Setting::get('delivery_slots'));
-    }
-
-    /**
      * Test admin can update payment gateways.
      */
     public function test_admin_can_update_payment_gateways(): void
@@ -185,9 +131,6 @@ class AdminSettingTest extends TestCase
             'stripe_mode' => 'live',
             'stripe_publishable_key' => 'pk_live_12345',
             'stripe_secret_key' => 'sk_live_12345',
-            'paypal_enabled' => 0,
-            'paypal_mode' => 'sandbox',
-            'paypal_client_id' => '',
         ]);
 
         $updateResponse->assertRedirect('/admin/settings/payments');
@@ -199,7 +142,7 @@ class AdminSettingTest extends TestCase
     }
 
     /**
-     * Test admin can update stock & inventory alerts.
+     * Test admin can update stock & inventory settings.
      */
     public function test_admin_can_update_inventory_settings(): void
     {
@@ -211,8 +154,6 @@ class AdminSettingTest extends TestCase
             'default_low_stock_threshold' => 15,
             'hide_out_of_stock' => 1,
             'allow_backorders' => 0,
-            'enable_stock_alert_emails' => 1,
-            'stock_alert_email' => 'purchasing@freshhub.local',
         ]);
 
         $updateResponse->assertRedirect('/admin/settings/inventory');
@@ -220,6 +161,6 @@ class AdminSettingTest extends TestCase
 
         $this->assertEquals(15, Setting::get('default_low_stock_threshold'));
         $this->assertTrue(Setting::get('hide_out_of_stock'));
-        $this->assertEquals('purchasing@freshhub.local', Setting::get('stock_alert_email'));
+        $this->assertFalse(Setting::get('allow_backorders'));
     }
 }

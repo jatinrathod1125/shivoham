@@ -13,6 +13,7 @@ use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Admin\SettingController;
+use App\Http\Controllers\Admin\StaffController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -103,15 +104,15 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/reports/inventory', [ReportController::class, 'inventory'])->name('reports.inventory');
         Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
 
+        // Staff & Role-Based Access Control
+        Route::post('/staff/{staff}/toggle-status', [StaffController::class, 'toggleStatus'])->name('staff.toggle-status');
+        Route::resource('staff', StaffController::class)->names('staff');
+
         // System Settings
         Route::get('/settings/localization', [SettingController::class, 'localization'])->name('settings.localization');
         Route::put('/settings/localization', [SettingController::class, 'updateLocalization'])->name('settings.update-localization');
-        Route::get('/settings/tax', [SettingController::class, 'tax'])->name('settings.tax');
-        Route::put('/settings/tax', [SettingController::class, 'updateTax'])->name('settings.update-tax');
         Route::get('/settings/hours', [SettingController::class, 'hours'])->name('settings.hours');
         Route::put('/settings/hours', [SettingController::class, 'updateHours'])->name('settings.update-hours');
-        Route::get('/settings/shipping', [SettingController::class, 'shipping'])->name('settings.shipping');
-        Route::put('/settings/shipping', [SettingController::class, 'updateShipping'])->name('settings.update-shipping');
         Route::get('/settings/payments', [SettingController::class, 'payments'])->name('settings.payments');
         Route::put('/settings/payments', [SettingController::class, 'updatePayments'])->name('settings.update-payments');
         Route::get('/settings/inventory', [SettingController::class, 'inventorySettings'])->name('settings.inventory');

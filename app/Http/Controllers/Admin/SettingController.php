@@ -62,19 +62,16 @@ class SettingController extends Controller
     }
 
     /**
-     * Display Currency & Localization Settings.
+     * Display Currency Configuration Settings.
      */
     public function localization(): View
     {
         return view('admin.settings.localization', [
-            'title' => 'Localization & Currency - ' . config('admin.name', 'Grocery Admin'),
+            'title' => 'Currency Configuration - ' . config('admin.name', 'Grocery Admin'),
             'settings' => [
                 'currency_code' => Setting::get('currency_code', 'USD'),
                 'currency_symbol' => Setting::get('currency_symbol', '$'),
                 'currency_position' => Setting::get('currency_position', 'left'),
-                'timezone' => Setting::get('timezone', 'America/Chicago'),
-                'date_format' => Setting::get('date_format', 'M d, Y'),
-                'time_format' => Setting::get('time_format', '12h'),
                 'decimal_separator' => Setting::get('decimal_separator', '.'),
                 'thousands_separator' => Setting::get('thousands_separator', ','),
             ],
@@ -82,7 +79,7 @@ class SettingController extends Controller
     }
 
     /**
-     * Update Currency & Localization Settings.
+     * Update Currency Configuration Settings.
      */
     public function updateLocalization(Request $request): RedirectResponse
     {
@@ -90,9 +87,6 @@ class SettingController extends Controller
             'currency_code' => ['required', 'string', 'max:5'],
             'currency_symbol' => ['required', 'string', 'max:5'],
             'currency_position' => ['required', 'in:left,right'],
-            'timezone' => ['required', 'string', 'max:50'],
-            'date_format' => ['required', 'string', 'max:20'],
-            'time_format' => ['required', 'in:12h,24h'],
             'decimal_separator' => ['required', 'string', 'max:1'],
             'thousands_separator' => ['nullable', 'string', 'max:1'],
         ]);
@@ -102,47 +96,7 @@ class SettingController extends Controller
         }
 
         return redirect()->route('admin.settings.localization')
-            ->with('toast_success', 'Localization & Currency settings updated.');
-    }
-
-    /**
-     * Display Tax & Financial Pricing Settings.
-     */
-    public function tax(): View
-    {
-        return view('admin.settings.tax', [
-            'title' => 'Tax & Pricing - ' . config('admin.name', 'Grocery Admin'),
-            'settings' => [
-                'enable_tax' => Setting::get('enable_tax', true),
-                'tax_rate_percentage' => Setting::get('tax_rate_percentage', '8.00'),
-                'tax_calculation_type' => Setting::get('tax_calculation_type', 'exclusive'),
-                'tax_number' => Setting::get('tax_number', 'TAX-US-982341-GH'),
-                'tax_label' => Setting::get('tax_label', 'Sales Tax (GST/VAT)'),
-            ],
-        ]);
-    }
-
-    /**
-     * Update Tax & Financial Pricing Settings.
-     */
-    public function updateTax(Request $request): RedirectResponse
-    {
-        $validated = $request->validate([
-            'enable_tax' => ['nullable', 'boolean'],
-            'tax_rate_percentage' => ['required', 'numeric', 'min:0', 'max:100'],
-            'tax_calculation_type' => ['required', 'in:inclusive,exclusive'],
-            'tax_number' => ['nullable', 'string', 'max:50'],
-            'tax_label' => ['required', 'string', 'max:50'],
-        ]);
-
-        Setting::set('enable_tax', $request->boolean('enable_tax'), 'orders', 'boolean');
-        Setting::set('tax_rate_percentage', $validated['tax_rate_percentage'], 'orders', 'decimal');
-        Setting::set('tax_calculation_type', $validated['tax_calculation_type'], 'orders', 'string');
-        Setting::set('tax_number', $validated['tax_number'] ?? '', 'orders', 'string');
-        Setting::set('tax_label', $validated['tax_label'], 'orders', 'string');
-
-        return redirect()->route('admin.settings.tax')
-            ->with('toast_success', 'Tax & pricing configurations saved.');
+            ->with('toast_success', 'Currency configuration settings updated.');
     }
 
     /**
@@ -205,52 +159,6 @@ class SettingController extends Controller
     }
 
     /**
-     * Display Shipping & Delivery Slots Settings.
-     */
-    public function shipping(): View
-    {
-        $defaultSlots = ['08:00 - 11:00', '11:00 - 14:00', '14:00 - 17:00', '17:00 - 20:00'];
-
-        return view('admin.settings.shipping', [
-            'title' => 'Shipping & Delivery Slots - ' . config('admin.name', 'Grocery Admin'),
-            'settings' => [
-                'free_shipping_threshold' => Setting::get('free_shipping_threshold', '40.00'),
-                'default_shipping_fee' => Setting::get('default_shipping_fee', '4.99'),
-                'express_shipping_fee' => Setting::get('express_shipping_fee', '9.99'),
-                'delivery_slots' => Setting::get('delivery_slots', $defaultSlots),
-                'max_orders_per_slot' => Setting::get('max_orders_per_slot', 25),
-                'slot_cutoff_minutes' => Setting::get('slot_cutoff_minutes', 60),
-            ],
-        ]);
-    }
-
-    /**
-     * Update Shipping & Delivery Slots Settings.
-     */
-    public function updateShipping(Request $request): RedirectResponse
-    {
-        $validated = $request->validate([
-            'free_shipping_threshold' => ['required', 'numeric', 'min:0'],
-            'default_shipping_fee' => ['required', 'numeric', 'min:0'],
-            'express_shipping_fee' => ['required', 'numeric', 'min:0'],
-            'delivery_slots' => ['required', 'array', 'min:1'],
-            'delivery_slots.*' => ['required', 'string', 'max:50'],
-            'max_orders_per_slot' => ['required', 'integer', 'min:1', 'max:500'],
-            'slot_cutoff_minutes' => ['required', 'integer', 'min:0', 'max:1440'],
-        ]);
-
-        Setting::set('free_shipping_threshold', $validated['free_shipping_threshold'], 'orders', 'decimal');
-        Setting::set('default_shipping_fee', $validated['default_shipping_fee'], 'orders', 'decimal');
-        Setting::set('express_shipping_fee', $validated['express_shipping_fee'], 'orders', 'decimal');
-        Setting::set('delivery_slots', array_values(array_filter($validated['delivery_slots'])), 'operations', 'json');
-        Setting::set('max_orders_per_slot', $validated['max_orders_per_slot'], 'operations', 'integer');
-        Setting::set('slot_cutoff_minutes', $validated['slot_cutoff_minutes'], 'operations', 'integer');
-
-        return redirect()->route('admin.settings.shipping')
-            ->with('toast_success', 'Shipping fees & delivery slots configuration saved.');
-    }
-
-    /**
      * Display Payment Gateways Settings.
      */
     public function payments(): View
@@ -267,10 +175,6 @@ class SettingController extends Controller
                 'stripe_mode' => Setting::get('stripe_mode', 'test'),
                 'stripe_publishable_key' => Setting::get('stripe_publishable_key', 'pk_test_sample_51O8G'),
                 'stripe_secret_key' => Setting::get('stripe_secret_key', 'sk_test_sample_51O8G'),
-                // PayPal
-                'paypal_enabled' => Setting::get('paypal_enabled', false),
-                'paypal_mode' => Setting::get('paypal_mode', 'sandbox'),
-                'paypal_client_id' => Setting::get('paypal_client_id', ''),
             ],
         ]);
     }
@@ -288,9 +192,6 @@ class SettingController extends Controller
             'stripe_mode' => ['required', 'in:test,live'],
             'stripe_publishable_key' => ['nullable', 'string', 'max:255'],
             'stripe_secret_key' => ['nullable', 'string', 'max:255'],
-            'paypal_enabled' => ['nullable', 'boolean'],
-            'paypal_mode' => ['required', 'in:sandbox,live'],
-            'paypal_client_id' => ['nullable', 'string', 'max:255'],
         ]);
 
         Setting::set('cod_enabled', $request->boolean('cod_enabled'), 'payments', 'boolean');
@@ -302,33 +203,27 @@ class SettingController extends Controller
         Setting::set('stripe_publishable_key', $validated['stripe_publishable_key'] ?? '', 'payments', 'string');
         Setting::set('stripe_secret_key', $validated['stripe_secret_key'] ?? '', 'payments', 'string');
 
-        Setting::set('paypal_enabled', $request->boolean('paypal_enabled'), 'payments', 'boolean');
-        Setting::set('paypal_mode', $validated['paypal_mode'], 'payments', 'string');
-        Setting::set('paypal_client_id', $validated['paypal_client_id'] ?? '', 'payments', 'string');
-
         return redirect()->route('admin.settings.payments')
             ->with('toast_success', 'Payment gateway configurations saved.');
     }
 
     /**
-     * Display Stock & Inventory Alert Settings.
+     * Display Stock & Inventory Settings.
      */
     public function inventorySettings(): View
     {
         return view('admin.settings.inventory', [
-            'title' => 'Stock & Inventory Alerts - ' . config('admin.name', 'Grocery Admin'),
+            'title' => 'Stock & Inventory Settings - ' . config('admin.name', 'Grocery Admin'),
             'settings' => [
                 'default_low_stock_threshold' => Setting::get('default_low_stock_threshold', 10),
                 'hide_out_of_stock' => Setting::get('hide_out_of_stock', false),
                 'allow_backorders' => Setting::get('allow_backorders', false),
-                'enable_stock_alert_emails' => Setting::get('enable_stock_alert_emails', true),
-                'stock_alert_email' => Setting::get('stock_alert_email', 'inventory@grocery.local'),
             ],
         ]);
     }
 
     /**
-     * Update Stock & Inventory Alert Settings.
+     * Update Stock & Inventory Settings.
      */
     public function updateInventorySettings(Request $request): RedirectResponse
     {
@@ -336,17 +231,13 @@ class SettingController extends Controller
             'default_low_stock_threshold' => ['required', 'integer', 'min:1', 'max:1000'],
             'hide_out_of_stock' => ['nullable', 'boolean'],
             'allow_backorders' => ['nullable', 'boolean'],
-            'enable_stock_alert_emails' => ['nullable', 'boolean'],
-            'stock_alert_email' => ['nullable', 'email', 'max:150'],
         ]);
 
         Setting::set('default_low_stock_threshold', $validated['default_low_stock_threshold'], 'inventory', 'integer');
         Setting::set('hide_out_of_stock', $request->boolean('hide_out_of_stock'), 'inventory', 'boolean');
         Setting::set('allow_backorders', $request->boolean('allow_backorders'), 'inventory', 'boolean');
-        Setting::set('enable_stock_alert_emails', $request->boolean('enable_stock_alert_emails'), 'inventory', 'boolean');
-        Setting::set('stock_alert_email', $validated['stock_alert_email'] ?? '', 'inventory', 'string');
 
         return redirect()->route('admin.settings.inventory')
-            ->with('toast_success', 'Stock & inventory alert settings updated.');
+            ->with('toast_success', 'Stock & inventory settings updated.');
     }
 }
