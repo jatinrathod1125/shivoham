@@ -264,39 +264,38 @@
 
 @push('scripts')
 <script>
-    // AJAX Status Toggle
+    // AJAX Status Toggle with jQuery
     function toggleCustomerStatus(id, checkbox) {
-        const url = `/admin/customers/${id}/toggle-status`;
-        fetch(url, {
-            method: 'POST',
+        const $checkbox = $(checkbox);
+        $.ajax({
+            url: `/admin/customers/${id}/toggle-status`,
+            type: 'POST',
             headers: {
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            }
-        })
-        .then(res => res.json())
-        .then(data => {
-            if (data.success) {
-                if (window.Admin && window.Admin.toast) {
-                    Admin.toast({ type: 'success', title: 'Status Updated', message: data.message });
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            dataType: 'json',
+            success: function(data) {
+                if (data.success) {
+                    if (window.Admin && window.Admin.toast) {
+                        Admin.toast({ type: 'success', title: 'Status Updated', message: data.message });
+                    }
+                } else {
+                    $checkbox.prop('checked', !$checkbox.prop('checked'));
+                    if (window.Admin && window.Admin.toast) {
+                        Admin.toast({ type: 'error', title: 'Error', message: data.message || 'Failed to update status.' });
+                    }
                 }
-            } else {
-                checkbox.checked = !checkbox.checked;
+            },
+            error: function() {
+                $checkbox.prop('checked', !$checkbox.prop('checked'));
                 if (window.Admin && window.Admin.toast) {
-                    Admin.toast({ type: 'error', title: 'Error', message: data.message || 'Failed to update status.' });
+                    Admin.toast({ type: 'error', title: 'Server Error', message: 'Could not connect to server.' });
                 }
-            }
-        })
-        .catch(err => {
-            checkbox.checked = !checkbox.checked;
-            if (window.Admin && window.Admin.toast) {
-                Admin.toast({ type: 'error', title: 'Server Error', message: 'Could not connect to server.' });
             }
         });
     }
 
-    // SweetAlert2 Delete Confirmation
+    // SweetAlert2 Delete Confirmation with jQuery
     function confirmCustomerDelete(id, name, ordersCount) {
         if (ordersCount > 0) {
             Swal.fire({
@@ -316,9 +315,7 @@
                 confirmButtonText: 'Yes, delete',
                 confirmButtonColor: '#dc2626',
                 onConfirm: () => {
-                    const form = document.getElementById('delete-customer-form');
-                    form.action = `/admin/customers/${id}`;
-                    form.submit();
+                    $('#delete-customer-form').attr('action', `/admin/customers/${id}`).trigger('submit');
                 }
             });
         }

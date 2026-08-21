@@ -125,8 +125,8 @@
                     <div class="space-y-3">
                         <div
                             id="banner-dropzone"
-                            onclick="document.getElementById('banner-file-input').click()"
-                            class="border-2 border-dashed border-slate-200 rounded-xl p-4 text-center hover:border-emerald-500 hover:bg-emerald-50/20 transition-all cursor-pointer group"
+                            class="relative flex flex-col items-center justify-center p-6 border-2 border-dashed border-slate-300 rounded-xl cursor-pointer hover:border-emerald-500 hover:bg-emerald-50/20 transition-all group"
+                            onclick="$('#banner-file-input').trigger('click')"
                         >
                             <input
                                 type="file"
@@ -233,11 +233,10 @@
         if (input.files && input.files[0]) {
             const reader = new FileReader();
             reader.onload = function(e) {
-                document.getElementById('banner-preview-img').src = e.target.result;
-                const ph = document.getElementById('banner-placeholder');
-                if (ph) ph.classList.add('hidden');
-                document.getElementById('banner-preview-box').classList.remove('hidden');
-            }
+                $('#banner-preview-img').attr('src', e.target.result);
+                $('#banner-placeholder').addClass('hidden');
+                $('#banner-preview-box').removeClass('hidden');
+            };
             reader.readAsDataURL(input.files[0]);
         }
     }
@@ -250,9 +249,7 @@
                 confirmButtonText: 'Yes, delete',
                 confirmButtonColor: '#dc2626',
                 onConfirm: () => {
-                    const form = document.getElementById('delete-offer-form');
-                    form.action = `/admin/offers/${id}`;
-                    form.submit();
+                    $('#delete-offer-form').attr('action', `/admin/offers/${id}`).trigger('submit');
                 }
             });
         }

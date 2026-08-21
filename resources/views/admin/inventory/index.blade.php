@@ -404,49 +404,50 @@
 @push('scripts')
 <script>
     function openQuickStockModal(id, name, currentStock, unit) {
-        document.getElementById('modal-product-id').value = id;
-        document.getElementById('modal-product-name').textContent = name;
-        document.getElementById('modal-product-unit').textContent = unit || 'units';
-        document.getElementById('modal-quantity-input').value = 10;
-        document.getElementById('modal-reason-input').value = '';
-        document.getElementById('modal-reference-input').value = '';
-        document.getElementById('quick-stock-modal').classList.remove('hidden');
+        $('#modal-product-id').val(id);
+        $('#modal-product-name').text(name);
+        $('#modal-product-unit').text(unit || 'units');
+        $('#modal-quantity-input').val(10);
+        $('#modal-reason-input').val('');
+        $('#modal-reference-input').val('');
+        $('#quick-stock-modal').removeClass('hidden');
     }
 
     function closeQuickStockModal() {
-        document.getElementById('quick-stock-modal').classList.add('hidden');
+        $('#quick-stock-modal').addClass('hidden');
     }
 
     function handleInventoryAdjustmentSubmit(e) {
         e.preventDefault();
-        const form = document.getElementById('quick-stock-form');
-        const formData = new FormData(form);
+        const formData = new FormData($('#quick-stock-form')[0]);
 
-        fetch("{{ route('admin.inventory.adjust') }}", {
-            method: 'POST',
+        $.ajax({
+            url: "{{ route('admin.inventory.adjust') }}",
+            type: 'POST',
             headers: {
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                'Accept': 'application/json',
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             },
-            body: formData
-        })
-        .then(res => res.json())
-        .then(data => {
-            if (data.success) {
-                closeQuickStockModal();
-                if (window.Admin && window.Admin.toast) {
-                    Admin.toast({ type: 'success', title: 'Inventory Updated', message: data.message });
+            data: formData,
+            processData: false,
+            contentType: false,
+            dataType: 'json',
+            success: function(data) {
+                if (data.success) {
+                    closeQuickStockModal();
+                    if (window.Admin && window.Admin.toast) {
+                        Admin.toast({ type: 'success', title: 'Inventory Updated', message: data.message });
+                    }
+                    setTimeout(() => window.location.reload(), 600);
+                } else {
+                    if (window.Admin && window.Admin.toast) {
+                        Admin.toast({ type: 'error', title: 'Error', message: data.message || 'Failed to record adjustment.' });
+                    }
                 }
-                setTimeout(() => window.location.reload(), 600);
-            } else {
+            },
+            error: function() {
                 if (window.Admin && window.Admin.toast) {
-                    Admin.toast({ type: 'error', title: 'Error', message: data.message || 'Failed to record adjustment.' });
+                    Admin.toast({ type: 'error', title: 'Server Error', message: 'Could not connect to server.' });
                 }
-            }
-        })
-        .catch(err => {
-            if (window.Admin && window.Admin.toast) {
-                Admin.toast({ type: 'error', title: 'Server Error', message: 'Could not connect to server.' });
             }
         });
     }

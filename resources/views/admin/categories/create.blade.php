@@ -101,7 +101,7 @@
                                 @foreach(['apple', 'carrot', 'milk', 'wheat', 'coffee', 'beef', 'cookie', 'package', 'sparkles', 'shopping-bag'] as $suggestedIcon)
                                     <button
                                         type="button"
-                                        onclick="document.getElementById('category-icon-input').value = '{{ $suggestedIcon }}';"
+                                        onclick="$('#category-icon-input').val('{{ $suggestedIcon }}');"
                                         class="px-2.5 py-1 rounded-lg border border-slate-200 bg-slate-50 hover:bg-emerald-50 hover:border-emerald-200 text-slate-700 text-xs font-medium transition-colors"
                                     >
                                         {{ $suggestedIcon }}
@@ -188,25 +188,26 @@
 
 @push('scripts')
 <script>
-    // Auto-generate URL slug from Name input
-    document.addEventListener('DOMContentLoaded', function () {
-        const nameInput = document.getElementById('category-name-input');
-        const slugInput = document.getElementById('category-slug-input');
+    // Auto-generate URL slug from Name input using jQuery
+    $(function () {
+        const $nameInput = $('#category-name-input');
+        const $slugInput = $('#category-slug-input');
 
-        if (nameInput && slugInput) {
-            nameInput.addEventListener('input', function () {
-                if (!slugInput.dataset.manualEdit) {
-                    slugInput.value = nameInput.value
+        if ($nameInput.length && $slugInput.length) {
+            $nameInput.on('input', function () {
+                if (!$slugInput.data('manualEdit')) {
+                    const slug = $(this).val()
                         .toLowerCase()
                         .trim()
                         .replace(/[^\w\s-]/g, '')
                         .replace(/[\s_-]+/g, '-')
                         .replace(/^-+|-+$/g, '');
+                    $slugInput.val(slug);
                 }
             });
 
-            slugInput.addEventListener('input', function () {
-                slugInput.dataset.manualEdit = 'true';
+            $slugInput.on('input', function () {
+                $slugInput.data('manualEdit', true);
             });
         }
     });

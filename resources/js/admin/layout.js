@@ -1,65 +1,61 @@
 import $ from 'jquery';
 
 /**
- * Grocery Admin - Layout & Navigation Controller
+ * Grocery Admin - Layout & Navigation Controller (jQuery Powered)
  * Handles mobile sidebar drawer, fullscreen toggle, submenus, and keyboard shortcuts
  */
 
 window.Admin = window.Admin || {};
 
 /**
- * Mobile Sidebar Open
+ * Mobile Sidebar Open with jQuery
  */
 window.Admin.openMobileSidebar = function () {
-    const drawer = document.getElementById('mobile-sidebar-drawer');
-    const backdrop = document.getElementById('mobile-sidebar-backdrop');
-    const content = document.getElementById('mobile-sidebar-content');
-    if (!drawer) return;
+    const $drawer = $('#mobile-sidebar-drawer');
+    const $backdrop = $('#mobile-sidebar-backdrop');
+    const $content = $('#mobile-sidebar-content');
+    if (!$drawer.length) return;
 
-    drawer.classList.remove('hidden');
-    document.body.classList.add('overflow-hidden');
+    $drawer.removeClass('hidden');
+    $('body').addClass('overflow-hidden');
 
     setTimeout(() => {
-        if (backdrop) {
-            backdrop.classList.remove('opacity-0');
-            backdrop.classList.add('opacity-100');
+        if ($backdrop.length) {
+            $backdrop.removeClass('opacity-0').addClass('opacity-100');
         }
-        if (content) {
-            content.classList.remove('-translate-x-full');
-            content.classList.add('translate-x-0');
+        if ($content.length) {
+            $content.removeClass('-translate-x-full').addClass('translate-x-0');
         }
         window.Admin.refreshIcons();
     }, 10);
 };
 
 /**
- * Mobile Sidebar Close
+ * Mobile Sidebar Close with jQuery
  */
 window.Admin.closeMobileSidebar = function () {
-    const drawer = document.getElementById('mobile-sidebar-drawer');
-    const backdrop = document.getElementById('mobile-sidebar-backdrop');
-    const content = document.getElementById('mobile-sidebar-content');
-    if (!drawer) return;
+    const $drawer = $('#mobile-sidebar-drawer');
+    const $backdrop = $('#mobile-sidebar-backdrop');
+    const $content = $('#mobile-sidebar-content');
+    if (!$drawer.length) return;
 
-    if (backdrop) {
-        backdrop.classList.remove('opacity-100');
-        backdrop.classList.add('opacity-0');
+    if ($backdrop.length) {
+        $backdrop.removeClass('opacity-100').addClass('opacity-0');
     }
-    if (content) {
-        content.classList.remove('translate-x-0');
-        content.classList.add('-translate-x-full');
+    if ($content.length) {
+        $content.removeClass('translate-x-0').addClass('-translate-x-full');
     }
 
     setTimeout(() => {
-        drawer.classList.add('hidden');
-        if (document.querySelectorAll('[role="dialog"]:not(.hidden)').length === 0) {
-            document.body.classList.remove('overflow-hidden');
+        $drawer.addClass('hidden');
+        if ($('[role="dialog"]:not(.hidden)').length === 0) {
+            $('body').removeClass('overflow-hidden');
         }
     }, 300);
 };
 
 /**
- * Fullscreen Toggle
+ * Fullscreen Toggle with jQuery
  */
 window.Admin.toggleFullscreen = function () {
     const doc = document;
@@ -82,7 +78,7 @@ window.Admin.toggleFullscreen = function () {
     window.Admin.refreshIcons();
 };
 
-// Event delegation bindings
+// Event delegation bindings with jQuery
 $(function () {
     // Open Mobile Sidebar
     $(document).on('click', '#open-mobile-sidebar-btn', function (e) {
@@ -127,10 +123,9 @@ $(function () {
     $(document).on('keydown', function (e) {
         if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
             e.preventDefault();
-            const searchInput = document.getElementById('global-topbar-search');
-            if (searchInput) {
-                searchInput.focus();
-                searchInput.select();
+            const $searchInput = $('#global-topbar-search');
+            if ($searchInput.length) {
+                $searchInput.trigger('focus').trigger('select');
             }
         }
     });

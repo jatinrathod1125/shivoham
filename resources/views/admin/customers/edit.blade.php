@@ -181,7 +181,7 @@
 
 @push('scripts')
 <script>
-    // SweetAlert2 Delete Confirmation
+    // SweetAlert2 Delete Confirmation with jQuery
     function confirmCustomerDelete(id, name, ordersCount) {
         if (ordersCount > 0) {
             Swal.fire({
@@ -201,9 +201,7 @@
                 confirmButtonText: 'Yes, delete',
                 confirmButtonColor: '#dc2626',
                 onConfirm: () => {
-                    const form = document.getElementById('delete-customer-form');
-                    form.action = `/admin/customers/${id}`;
-                    form.submit();
+                    $('#delete-customer-form').attr('action', `/admin/customers/${id}`).trigger('submit');
                 }
             });
         }

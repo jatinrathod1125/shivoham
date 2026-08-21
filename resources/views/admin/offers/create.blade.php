@@ -124,7 +124,7 @@
                     <div class="space-y-3">
                         <div
                             id="banner-dropzone"
-                            onclick="document.getElementById('banner-file-input').click()"
+                            onclick="$('#banner-file-input').trigger('click')"
                             class="border-2 border-dashed border-slate-200 rounded-xl p-4 text-center hover:border-emerald-500 hover:bg-emerald-50/20 transition-all cursor-pointer group"
                         >
                             <input
@@ -198,35 +198,38 @@
 
 @push('scripts')
 <script>
-    // Live slug generation
-    const titleInput = document.getElementById('offer-title');
-    const slugInput = document.getElementById('offer-slug');
+    $(function () {
+        // Live slug generation with jQuery
+        const $titleInput = $('#offer-title');
+        const $slugInput = $('#offer-slug');
 
-    if (titleInput && slugInput) {
-        titleInput.addEventListener('input', function() {
-            if (!slugInput.dataset.manual) {
-                slugInput.value = this.value
-                    .toLowerCase()
-                    .replace(/[^\w\s-]/g, '')
-                    .replace(/[\s_-]+/g, '-')
-                    .replace(/^-+|-+$/g, '');
-            }
-        });
+        if ($titleInput.length && $slugInput.length) {
+            $titleInput.on('input', function() {
+                if (!$slugInput.data('manual')) {
+                    const slug = $(this).val()
+                        .toLowerCase()
+                        .replace(/[^\w\s-]/g, '')
+                        .replace(/[\s_-]+/g, '-')
+                        .replace(/^-+|-+$/g, '');
+                    $slugInput.val(slug);
+                }
+            });
 
-        slugInput.addEventListener('input', function() {
-            this.dataset.manual = this.value.length > 0;
-        });
-    }
+            $slugInput.on('input', function() {
+                $slugInput.data('manual', $(this).val().length > 0);
+            });
+        }
+    });
 
-    // Image preview
+    // Image preview with jQuery
     function previewBanner(input) {
         if (input.files && input.files[0]) {
             const reader = new FileReader();
             reader.onload = function(e) {
-                document.getElementById('banner-preview-img').src = e.target.result;
-                document.getElementById('banner-placeholder').classList.add('hidden');
-                document.getElementById('banner-preview-box').classList.remove('hidden');
-            }
+                $('#banner-preview-img').attr('src', e.target.result);
+                $('#banner-placeholder').addClass('hidden');
+                $('#banner-preview-box').removeClass('hidden');
+            };
             reader.readAsDataURL(input.files[0]);
         }
     }

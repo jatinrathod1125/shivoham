@@ -2,7 +2,7 @@ import Swal from 'sweetalert2';
 import $ from 'jquery';
 
 /**
- * Grocery Admin - Common UI & Interaction Utilities
+ * Grocery Admin - Common UI & Interaction Utilities (jQuery Powered)
  * Standardized across all admin modules
  */
 
@@ -15,8 +15,8 @@ try {
         timer: 3500,
         timerProgressBar: true,
         didOpen: (toast) => {
-            toast.onmouseenter = Swal.stopTimer;
-            toast.onmouseleave = Swal.resumeTimer;
+            $(toast).on('mouseenter', Swal.stopTimer);
+            $(toast).on('mouseleave', Swal.resumeTimer);
         }
     });
 } catch (e) {
@@ -92,83 +92,63 @@ window.Admin.confirm = function ({
 };
 
 /**
- * Modal Controller
+ * Modal Controller with jQuery
  */
 window.Admin.modal = {
     open: function (id) {
-        const modal = document.getElementById(id);
-        if (!modal) return;
+        const $modal = $('#' + id);
+        if (!$modal.length) return;
 
-        document.body.classList.add('overflow-hidden');
-        modal.classList.remove('hidden');
+        $('body').addClass('overflow-hidden');
+        $modal.removeClass('hidden');
 
         setTimeout(() => {
-            const backdrop = modal.querySelector('.modal-backdrop');
-            const content = modal.querySelector('.modal-content');
-            if (backdrop) {
-                backdrop.classList.remove('opacity-0');
-                backdrop.classList.add('opacity-100');
-            }
-            if (content) {
-                content.classList.remove('scale-95', 'opacity-0');
-                content.classList.add('scale-100', 'opacity-100');
-            }
+            $modal.find('.modal-backdrop').removeClass('opacity-0').addClass('opacity-100');
+            $modal.find('.modal-content').removeClass('scale-95 opacity-0').addClass('scale-100 opacity-100');
         }, 10);
     },
 
     close: function (id) {
-        const modal = document.getElementById(id);
-        if (!modal) return;
+        const $modal = $('#' + id);
+        if (!$modal.length) return;
 
-        const backdrop = modal.querySelector('.modal-backdrop');
-        const content = modal.querySelector('.modal-content');
-        if (backdrop) {
-            backdrop.classList.remove('opacity-100');
-            backdrop.classList.add('opacity-0');
-        }
-        if (content) {
-            content.classList.remove('scale-100', 'opacity-100');
-            content.classList.add('scale-95', 'opacity-0');
-        }
+        $modal.find('.modal-backdrop').removeClass('opacity-100').addClass('opacity-0');
+        $modal.find('.modal-content').removeClass('scale-100 opacity-100').addClass('scale-95 opacity-0');
 
         setTimeout(() => {
-            modal.classList.add('hidden');
-            if (document.querySelectorAll('[role="dialog"]:not(.hidden)').length === 0) {
-                document.body.classList.remove('overflow-hidden');
+            $modal.addClass('hidden');
+            if ($('[role="dialog"]:not(.hidden)').length === 0) {
+                $('body').removeClass('overflow-hidden');
             }
         }, 250);
     }
 };
 
 /**
- * Dropdown Controller
+ * Dropdown Controller with jQuery
  */
 window.Admin.toggleDropdown = function (triggerEl, event) {
     if (event) event.stopPropagation();
-    const container = triggerEl.closest('.dropdown-container');
-    if (!container) return;
-    const menu = container.querySelector('.dropdown-menu');
-    if (!menu) return;
+    const $container = $(triggerEl).closest('.dropdown-container');
+    if (!$container.length) return;
+    const $menu = $container.find('.dropdown-menu');
+    if (!$menu.length) return;
 
-    const isHidden = menu.classList.contains('hidden');
+    const isHidden = $menu.hasClass('hidden');
 
     // Close all open dropdowns first
-    document.querySelectorAll('.dropdown-menu').forEach(m => {
-        m.classList.add('hidden', 'opacity-0', 'scale-95');
-        m.classList.remove('opacity-100', 'scale-100');
-    });
+    $('.dropdown-menu').addClass('hidden opacity-0 scale-95').removeClass('opacity-100 scale-100');
 
     if (isHidden) {
-        menu.classList.remove('hidden');
+        $menu.removeClass('hidden');
         setTimeout(() => {
-            menu.classList.remove('opacity-0', 'scale-95');
-            menu.classList.add('opacity-100', 'scale-100');
+            $menu.removeClass('opacity-0 scale-95').addClass('opacity-100 scale-100');
         }, 10);
     }
 };
 
 /**
- * Toggle button loading state
+ * Toggle button loading state with jQuery
  */
 window.Admin.btnLoading = function (btn, loading = true, loadingText = 'Processing...') {
     const $btn = $(btn);
@@ -198,32 +178,26 @@ window.Admin.refreshIcons = function () {
     }
 };
 
-// Global click outside to close dropdowns
-document.addEventListener('click', function (e) {
-    if (!e.target.closest('.dropdown-container')) {
-        document.querySelectorAll('.dropdown-menu').forEach(m => {
-            m.classList.add('hidden', 'opacity-0', 'scale-95');
-            m.classList.remove('opacity-100', 'scale-100');
-        });
+// Global click outside to close dropdowns with jQuery
+$(document).on('click', function (e) {
+    if (!$(e.target).closest('.dropdown-container').length) {
+        $('.dropdown-menu').addClass('hidden opacity-0 scale-95').removeClass('opacity-100 scale-100');
     }
 });
 
-// Handle ESC key for modals & dropdowns
-document.addEventListener('keydown', function (e) {
+// Handle ESC key for modals & dropdowns with jQuery
+$(document).on('keydown', function (e) {
     if (e.key === 'Escape') {
-        const openModals = Array.from(document.querySelectorAll('[role="dialog"]:not(.hidden)'));
-        const lastModal = openModals[openModals.length - 1];
-        if (lastModal && lastModal.id) {
-            window.Admin.modal.close(lastModal.id);
+        const $openModals = $('[role="dialog"]:not(.hidden)');
+        const $lastModal = $openModals.last();
+        if ($lastModal.length && $lastModal.attr('id')) {
+            window.Admin.modal.close($lastModal.attr('id'));
         }
-        document.querySelectorAll('.dropdown-menu').forEach(m => {
-            m.classList.add('hidden', 'opacity-0', 'scale-95');
-            m.classList.remove('opacity-100', 'scale-100');
-        });
+        $('.dropdown-menu').addClass('hidden opacity-0 scale-95').removeClass('opacity-100 scale-100');
     }
 });
 
-// File upload preview handler
+// File upload preview handler with jQuery
 $(document).on('change', '.file-upload-input', function () {
     const input = this;
     const $wrapper = $(this).closest('.file-upload-wrapper');

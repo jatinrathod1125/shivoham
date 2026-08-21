@@ -83,7 +83,6 @@
                     <div class="space-y-3">
                         <div
                             id="logo-dropzone"
-                            onclick="document.getElementById('logo-file-input').click()"
                             class="border-2 border-dashed border-slate-200 rounded-xl p-4 text-center hover:border-emerald-500 hover:bg-emerald-50/20 transition-all cursor-pointer group"
                         >
                             <input
@@ -92,7 +91,6 @@
                                 name="store_logo"
                                 accept="image/*"
                                 class="hidden"
-                                onchange="previewStoreLogo(this)"
                             />
                             @if($settings['store_logo'])
                                 <div id="logo-preview-box">
@@ -137,17 +135,23 @@
 
 @push('scripts')
 <script>
-    function previewStoreLogo(input) {
-        if (input.files && input.files[0]) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                document.getElementById('logo-preview-img').src = e.target.result;
-                const ph = document.getElementById('logo-placeholder');
-                if (ph) ph.classList.add('hidden');
-                document.getElementById('logo-preview-box').classList.remove('hidden');
+    $(function () {
+        $('#logo-dropzone').on('click', function () {
+            $('#logo-file-input').trigger('click');
+        });
+
+        $('#logo-file-input').on('change', function () {
+            const input = this;
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    $('#logo-preview-img').attr('src', e.target.result);
+                    $('#logo-placeholder').addClass('hidden');
+                    $('#logo-preview-box').removeClass('hidden');
+                };
+                reader.readAsDataURL(input.files[0]);
             }
-            reader.readAsDataURL(input.files[0]);
-        }
-    }
+        });
+    });
 </script>
 @endpush

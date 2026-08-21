@@ -135,25 +135,26 @@
 
 @push('scripts')
 <script>
-    // Auto-generate URL slug from Brand Name input
-    document.addEventListener('DOMContentLoaded', function () {
-        const nameInput = document.getElementById('brand-name-input');
-        const slugInput = document.getElementById('brand-slug-input');
+    // Auto-generate URL slug from Brand Name input using jQuery
+    $(function () {
+        const $nameInput = $('#brand-name-input');
+        const $slugInput = $('#brand-slug-input');
 
-        if (nameInput && slugInput) {
-            nameInput.addEventListener('input', function () {
-                if (!slugInput.dataset.manualEdit) {
-                    slugInput.value = nameInput.value
+        if ($nameInput.length && $slugInput.length) {
+            $nameInput.on('input', function () {
+                if (!$slugInput.data('manualEdit')) {
+                    const slug = $(this).val()
                         .toLowerCase()
                         .trim()
                         .replace(/[^\w\s-]/g, '')
                         .replace(/[\s_-]+/g, '-')
                         .replace(/^-+|-+$/g, '');
+                    $slugInput.val(slug);
                 }
             });
 
-            slugInput.addEventListener('input', function () {
-                slugInput.dataset.manualEdit = 'true';
+            $slugInput.on('input', function () {
+                $slugInput.data('manualEdit', true);
             });
         }
     });

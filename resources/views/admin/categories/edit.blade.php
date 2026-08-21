@@ -102,7 +102,7 @@
                                 @foreach(['apple', 'carrot', 'milk', 'wheat', 'coffee', 'beef', 'cookie', 'package', 'sparkles', 'shopping-bag'] as $suggestedIcon)
                                     <button
                                         type="button"
-                                        onclick="document.getElementById('category-icon-input').value = '{{ $suggestedIcon }}';"
+                                        onclick="$('#category-icon-input').val('{{ $suggestedIcon }}');"
                                         class="px-2.5 py-1 rounded-lg border border-slate-200 bg-slate-50 hover:bg-emerald-50 hover:border-emerald-200 text-slate-700 text-xs font-medium transition-colors"
                                     >
                                         {{ $suggestedIcon }}
@@ -235,7 +235,7 @@
 
 @push('scripts')
 <script>
-    // SweetAlert2 Delete Confirmation
+    // SweetAlert2 Delete Confirmation with jQuery
     function confirmCategoryDelete(id, name, productsCount, childrenCount) {
         if (productsCount > 0) {
             Swal.fire({
@@ -266,9 +266,7 @@
                 confirmButtonText: 'Yes, delete',
                 confirmButtonColor: '#dc2626',
                 onConfirm: () => {
-                    const form = document.getElementById('delete-category-form');
-                    form.action = `/admin/categories/${id}`;
-                    form.submit();
+                    $('#delete-category-form').attr('action', `/admin/categories/${id}`).trigger('submit');
                 }
             });
         }

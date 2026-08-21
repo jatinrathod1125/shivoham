@@ -409,28 +409,27 @@
 
 @push('scripts')
 <script>
-    // Live Storefront Banner Preview Modal
+    // Live Storefront Banner Preview Modal with jQuery
     function openBannerPreview(title, subtitle, image, position, link) {
-        document.getElementById('modal-banner-title').textContent = title;
-        document.getElementById('modal-banner-headline').textContent = title;
-        document.getElementById('modal-banner-subtitle').textContent = subtitle || 'Fresh farm-to-door grocery essentials delivered daily.';
-        document.getElementById('modal-banner-image').src = image || '/images/banners/hero-grocery-1.jpg';
-        document.getElementById('modal-banner-position').textContent = position.replace('_', ' ').toUpperCase() + ' PLACEMENT';
-        document.getElementById('modal-badge-position').textContent = position.replace('_', ' ').toUpperCase();
+        $('#modal-banner-title').text(title);
+        $('#modal-banner-headline').text(title);
+        $('#modal-banner-subtitle').text(subtitle || 'Fresh farm-to-door grocery essentials delivered daily.');
+        $('#modal-banner-image').attr('src', image || '/images/banners/hero-grocery-1.jpg');
+        $('#modal-banner-position').text(position.replace('_', ' ').toUpperCase() + ' PLACEMENT');
+        $('#modal-badge-position').text(position.replace('_', ' ').toUpperCase());
         
-        const ctaBtn = document.getElementById('modal-banner-cta');
-        const linkTxt = document.getElementById('modal-banner-link-text');
+        const $ctaBtn = $('#modal-banner-cta');
+        const $linkTxt = $('#modal-banner-link-text');
         if (link) {
-            ctaBtn.href = link;
-            linkTxt.textContent = 'Target Link: ' + link;
+            $ctaBtn.attr('href', link);
+            $linkTxt.text('Target Link: ' + link);
         } else {
-            ctaBtn.href = '#';
-            linkTxt.textContent = 'Target Link: No link configured';
+            $ctaBtn.attr('href', '#');
+            $linkTxt.text('Target Link: No link configured');
         }
 
-        const modal = document.getElementById('banner-preview-modal');
-        modal.classList.remove('hidden');
-        modal.classList.add('flex');
+        const $modal = $('#banner-preview-modal');
+        $modal.removeClass('hidden').addClass('flex');
 
         if (window.Admin && typeof window.Admin.refreshIcons === 'function') {
             window.Admin.refreshIcons();
@@ -438,43 +437,41 @@
     }
 
     function closeBannerPreview() {
-        const modal = document.getElementById('banner-preview-modal');
-        modal.classList.add('hidden');
-        modal.classList.remove('flex');
+        $('#banner-preview-modal').addClass('hidden').removeClass('flex');
     }
 
-    // AJAX Status Toggle
+    // AJAX Status Toggle with jQuery
     function toggleBannerStatus(id, checkbox) {
-        fetch(`/admin/banners/${id}/toggle-status`, {
-            method: 'POST',
+        const $checkbox = $(checkbox);
+        $.ajax({
+            url: `/admin/banners/${id}/toggle-status`,
+            type: 'POST',
             headers: {
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            }
-        })
-        .then(res => res.json())
-        .then(data => {
-            if (data.success) {
-                if (window.Admin && window.Admin.toast) {
-                    Admin.toast({ type: 'success', title: 'Status Updated', message: data.message });
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            dataType: 'json',
+            success: function(data) {
+                if (data.success) {
+                    if (window.Admin && window.Admin.toast) {
+                        Admin.toast({ type: 'success', title: 'Status Updated', message: data.message });
+                    }
+                } else {
+                    $checkbox.prop('checked', !$checkbox.prop('checked'));
+                    if (window.Admin && window.Admin.toast) {
+                        Admin.toast({ type: 'error', title: 'Error', message: data.message || 'Failed to update status.' });
+                    }
                 }
-            } else {
-                checkbox.checked = !checkbox.checked;
+            },
+            error: function() {
+                $checkbox.prop('checked', !$checkbox.prop('checked'));
                 if (window.Admin && window.Admin.toast) {
-                    Admin.toast({ type: 'error', title: 'Error', message: data.message || 'Failed to update status.' });
+                    Admin.toast({ type: 'error', title: 'Server Error', message: 'Could not connect to server.' });
                 }
-            }
-        })
-        .catch(err => {
-            checkbox.checked = !checkbox.checked;
-            if (window.Admin && window.Admin.toast) {
-                Admin.toast({ type: 'error', title: 'Server Error', message: 'Could not connect to server.' });
             }
         });
     }
 
-    // SweetAlert2 Delete Confirmation
+    // SweetAlert2 Delete Confirmation with jQuery
     function confirmBannerDelete(id, title) {
         if (window.Admin && window.Admin.confirm) {
             Admin.confirm({
@@ -483,9 +480,7 @@
                 confirmButtonText: 'Yes, delete',
                 confirmButtonColor: '#dc2626',
                 onConfirm: () => {
-                    const form = document.getElementById('delete-banner-form');
-                    form.action = `/admin/banners/${id}`;
-                    form.submit();
+                    $('#delete-banner-form').attr('action', `/admin/banners/${id}`).trigger('submit');
                 }
             });
         }

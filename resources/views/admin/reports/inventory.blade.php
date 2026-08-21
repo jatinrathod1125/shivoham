@@ -271,7 +271,7 @@
 @push('scripts')
 <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
+    $(function () {
         // 1. Stock Health Donut
         const healthSeries = {!! $stockHealthSeries !!};
         const healthDonutOptions = {
@@ -306,7 +306,7 @@
             dataLabels: { enabled: false }
         };
 
-        const healthDonut = new ApexCharts(document.querySelector("#stock-health-donut"), healthDonutOptions);
+        const healthDonut = new ApexCharts($('#stock-health-donut')[0], healthDonutOptions);
         healthDonut.render();
 
         // 2. Category Inventory Valuation Bar Chart
@@ -358,7 +358,7 @@
             }
         };
 
-        const catBar = new ApexCharts(document.querySelector("#category-value-bar"), catBarOptions);
+        const catBar = new ApexCharts($('#category-value-bar')[0], catBarOptions);
         catBar.render();
     });
 </script>

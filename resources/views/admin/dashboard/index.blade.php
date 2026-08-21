@@ -339,7 +339,11 @@
     }
 
     triggerDashboardCharts();
-    document.addEventListener('DOMContentLoaded', triggerDashboardCharts);
-    window.addEventListener('load', triggerDashboardCharts);
+    $(function () {
+        triggerDashboardCharts();
+    });
+    $(window).on('load', function () {
+        triggerDashboardCharts();
+    });
 </script>
 @endpush

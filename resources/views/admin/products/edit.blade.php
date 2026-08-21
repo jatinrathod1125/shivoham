@@ -421,51 +421,49 @@
 
 @push('scripts')
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        // Live Margin Calculator
-        const costInput = document.getElementById('cost-price-input');
-        const sellInput = document.getElementById('selling-price-input');
-        const marginPct = document.getElementById('margin-percentage-badge');
-        const marginAmt = document.getElementById('margin-amount-badge');
+    $(function () {
+        // Live Margin Calculator with jQuery
+        const $costInput = $('#cost-price-input');
+        const $sellInput = $('#selling-price-input');
+        const $marginPct = $('#margin-percentage-badge');
+        const $marginAmt = $('#margin-amount-badge');
 
         function recalculateMargin() {
-            const cost = parseFloat(costInput?.value) || 0;
-            const sell = parseFloat(sellInput?.value) || 0;
+            const cost = parseFloat($costInput.val()) || 0;
+            const sell = parseFloat($sellInput.val()) || 0;
 
             if (sell > 0) {
                 const profit = sell - cost;
                 const pct = ((profit / sell) * 100).toFixed(1);
-                marginPct.textContent = `${pct}%`;
-                marginAmt.textContent = `($${profit.toFixed(2)} / unit)`;
+                $marginPct.text(`${pct}%`);
+                $marginAmt.text(`($${profit.toFixed(2)} / unit)`);
 
                 if (pct < 0) {
-                    marginPct.className = 'text-base font-bold text-rose-600';
+                    $marginPct.attr('class', 'text-base font-bold text-rose-600');
                 } else if (pct < 15) {
-                    marginPct.className = 'text-base font-bold text-amber-600';
+                    $marginPct.attr('class', 'text-base font-bold text-amber-600');
                 } else {
-                    marginPct.className = 'text-base font-bold text-emerald-600';
+                    $marginPct.attr('class', 'text-base font-bold text-emerald-600');
                 }
             } else {
-                marginPct.textContent = '0.0%';
-                marginAmt.textContent = '($0.00 / unit)';
-                marginPct.className = 'text-base font-bold text-slate-400';
+                $marginPct.text('0.0%');
+                $marginAmt.text('($0.00 / unit)');
+                $marginPct.attr('class', 'text-base font-bold text-slate-400');
             }
         }
 
-        costInput?.addEventListener('input', recalculateMargin);
-        sellInput?.addEventListener('input', recalculateMargin);
+        $costInput.on('input', recalculateMargin);
+        $sellInput.on('input', recalculateMargin);
         recalculateMargin();
     });
 
     function generateRandomSKU() {
-        const nameInput = document.getElementById('product-name-input');
-        const skuInput = document.getElementById('product-sku-input');
-        const nameClean = (nameInput?.value || 'ITEM').replace(/[^A-Za-z]/g, '').toUpperCase().substring(0, 4) || 'PRD';
+        const nameClean = ($('#product-name-input').val() || 'ITEM').replace(/[^A-Za-z]/g, '').toUpperCase().substring(0, 4) || 'PRD';
         const randNum = Math.floor(100 + Math.random() * 900);
-        skuInput.value = `PRD-${nameClean}-${randNum}`;
+        $('#product-sku-input').val(`PRD-${nameClean}-${randNum}`);
     }
 
-    // SweetAlert2 Delete Confirmation
+    // SweetAlert2 Delete Confirmation with jQuery
     function confirmProductDelete(id, name, ordersCount) {
         if (ordersCount > 0) {
             Swal.fire({
@@ -485,9 +483,7 @@
                 confirmButtonText: 'Yes, delete',
                 confirmButtonColor: '#dc2626',
                 onConfirm: () => {
-                    const form = document.getElementById('delete-product-form');
-                    form.action = `/admin/products/${id}`;
-                    form.submit();
+                    $('#delete-product-form').attr('action', `/admin/products/${id}`).trigger('submit');
                 }
             });
         }

@@ -1,6 +1,6 @@
 <script>
     // Trigger session toast if flash session exists
-    document.addEventListener('DOMContentLoaded', function () {
+    $(function () {
         if (window.Admin && typeof window.Admin.refreshIcons === 'function') {
             window.Admin.refreshIcons();
         }

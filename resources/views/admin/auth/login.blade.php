@@ -64,7 +64,7 @@
                         <button
                             type="button"
                             id="toggle-password-btn"
-                            class="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400 hover:text-slate-600 transition-colors"
+                            class="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400 hover:text-slate-600 transition-colors cursor-pointer"
                         >
                             <i data-lucide="eye" class="w-4 h-4"></i>
                         </button>
@@ -99,68 +99,38 @@
                 </div>
             </form>
 
-            <!-- Quick Demo Login Presets -->
-            <div class="mt-6 pt-6 border-t border-slate-100">
-                <p class="text-[11px] font-semibold uppercase tracking-wider text-slate-400 text-center mb-3">
-                    Quick Demo Credentials
-                </p>
-                <div class="grid grid-cols-3 gap-2">
-                    <button
-                        type="button"
-                        onclick="fillCredentials('admin@grocery.local', 'password')"
-                        class="px-2 py-1.5 rounded-lg border border-slate-200 bg-slate-50 hover:bg-emerald-50 hover:border-emerald-200 text-[11px] font-medium text-slate-700 hover:text-emerald-700 transition-colors text-center"
-                    >
-                        Admin
-                    </button>
-                    <button
-                        type="button"
-                        onclick="fillCredentials('manager@grocery.local', 'password')"
-                        class="px-2 py-1.5 rounded-lg border border-slate-200 bg-slate-50 hover:bg-emerald-50 hover:border-emerald-200 text-[11px] font-medium text-slate-700 hover:text-emerald-700 transition-colors text-center"
-                    >
-                        Manager
-                    </button>
-                    <button
-                        type="button"
-                        onclick="fillCredentials('staff@grocery.local', 'password')"
-                        class="px-2 py-1.5 rounded-lg border border-slate-200 bg-slate-50 hover:bg-emerald-50 hover:border-emerald-200 text-[11px] font-medium text-slate-700 hover:text-emerald-700 transition-colors text-center"
-                    >
-                        Staff
-                    </button>
-                </div>
-            </div>
+            <p class="mt-6 text-center text-xs text-slate-400">
+                &copy; {{ date('Y') }} {{ config('admin.name', 'Grocery Admin') }}. All rights reserved.
+            </p>
         </div>
-
-        <p class="mt-6 text-center text-xs text-slate-400">
-            &copy; {{ date('Y') }} {{ config('admin.name', 'Grocery Admin') }}. All rights reserved.
-        </p>
     </div>
 
     @include('partials.scripts')
 
     <script>
-        function fillCredentials(email, password) {
-            document.querySelector('input[name="email"]').value = email;
-            document.querySelector('input[name="password"]').value = password;
-            Admin.toast({ type: 'info', message: 'Filled ' + email });
-        }
+        $(function () {
+            // Toggle password visibility
+            $('#toggle-password-btn').on('click', function () {
+                const $pwdInput = $('#password');
+                const $icon = $(this).find('[data-lucide]');
+                if ($pwdInput.attr('type') === 'password') {
+                    $pwdInput.attr('type', 'text');
+                    $icon.attr('data-lucide', 'eye-off');
+                } else {
+                    $pwdInput.attr('type', 'password');
+                    $icon.attr('data-lucide', 'eye');
+                }
+                if (window.Admin && typeof window.Admin.refreshIcons === 'function') {
+                    Admin.refreshIcons();
+                }
+            });
 
-        // Toggle password visibility
-        document.getElementById('toggle-password-btn')?.addEventListener('click', function () {
-            const pwdInput = document.getElementById('password');
-            const icon = this.querySelector('[data-lucide]');
-            if (pwdInput.type === 'password') {
-                pwdInput.type = 'text';
-                icon.setAttribute('data-lucide', 'eye-off');
-            } else {
-                pwdInput.type = 'password';
-                icon.setAttribute('data-lucide', 'eye');
-            }
-            Admin.refreshIcons();
-        });
-
-        // Button loading on submit
-        $('#login-form').on('submit', function () {
-            Admin.btnLoading('#submit-login-btn', true, 'Signing in...');
+            // Button loading on submit
+            $('#login-form').on('submit', function () {
+                if (window.Admin && typeof window.Admin.btnLoading === 'function') {
+                    Admin.btnLoading('#submit-login-btn', true, 'Signing in...');
+                }
+            });
         });
     </script>
 </body>

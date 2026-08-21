@@ -243,9 +243,7 @@
                 confirmButtonText: 'Yes, delete',
                 confirmButtonColor: '#dc2626',
                 onConfirm: () => {
-                    const form = document.getElementById('delete-coupon-form');
-                    form.action = `/admin/coupons/${id}`;
-                    form.submit();
+                    $('#delete-coupon-form').attr('action', `/admin/coupons/${id}`).trigger('submit');
                 }
             });
         }

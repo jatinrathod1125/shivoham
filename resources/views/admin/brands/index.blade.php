@@ -269,73 +269,71 @@
 
 @push('scripts')
 <script>
-    // AJAX Quick Status Toggle
+    // AJAX Quick Status Toggle with jQuery
     function toggleBrandStatus(id, checkbox) {
-        const url = `/admin/brands/${id}/toggle-status`;
-        fetch(url, {
-            method: 'POST',
+        const $checkbox = $(checkbox);
+        $.ajax({
+            url: `/admin/brands/${id}/toggle-status`,
+            type: 'POST',
             headers: {
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            }
-        })
-        .then(res => res.json())
-        .then(data => {
-            if (data.success) {
-                if (window.Admin && window.Admin.toast) {
-                    Admin.toast({ type: 'success', title: 'Status Updated', message: data.message });
-                }
-            } else {
-                checkbox.checked = !checkbox.checked;
-                if (window.Admin && window.Admin.toast) {
-                    Admin.toast({ type: 'error', title: 'Error', message: data.message || 'Failed to update status.' });
-                }
-            }
-        })
-        .catch(err => {
-            checkbox.checked = !checkbox.checked;
-            if (window.Admin && window.Admin.toast) {
-                Admin.toast({ type: 'error', title: 'Server Error', message: 'Could not connect to server.' });
-            }
-        });
-    }
-
-    // AJAX Quick Featured Toggle
-    function toggleBrandFeatured(id, btn) {
-        const url = `/admin/brands/${id}/toggle-featured`;
-        fetch(url, {
-            method: 'POST',
-            headers: {
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            }
-        })
-        .then(res => res.json())
-        .then(data => {
-            if (data.success) {
-                const icon = btn.querySelector('svg, i');
-                if (data.is_featured) {
-                    btn.classList.add('text-amber-400');
-                    if (icon) icon.classList.add('fill-amber-400');
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            dataType: 'json',
+            success: function(data) {
+                if (data.success) {
+                    if (window.Admin && window.Admin.toast) {
+                        Admin.toast({ type: 'success', title: 'Status Updated', message: data.message });
+                    }
                 } else {
-                    btn.classList.remove('text-amber-400');
-                    if (icon) icon.classList.remove('fill-amber-400');
+                    $checkbox.prop('checked', !$checkbox.prop('checked'));
+                    if (window.Admin && window.Admin.toast) {
+                        Admin.toast({ type: 'error', title: 'Error', message: data.message || 'Failed to update status.' });
+                    }
                 }
+            },
+            error: function() {
+                $checkbox.prop('checked', !$checkbox.prop('checked'));
                 if (window.Admin && window.Admin.toast) {
-                    Admin.toast({ type: 'success', title: 'Featured Updated', message: data.message });
+                    Admin.toast({ type: 'error', title: 'Server Error', message: 'Could not connect to server.' });
                 }
-            }
-        })
-        .catch(err => {
-            if (window.Admin && window.Admin.toast) {
-                Admin.toast({ type: 'error', title: 'Server Error', message: 'Could not update featured flag.' });
             }
         });
     }
 
-    // SweetAlert2 Delete Confirmation
+    // AJAX Quick Featured Toggle with jQuery
+    function toggleBrandFeatured(id, btn) {
+        const $btn = $(btn);
+        $.ajax({
+            url: `/admin/brands/${id}/toggle-featured`,
+            type: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            dataType: 'json',
+            success: function(data) {
+                if (data.success) {
+                    const $icon = $btn.find('svg, i');
+                    if (data.is_featured) {
+                        $btn.addClass('text-amber-400');
+                        $icon.addClass('fill-amber-400');
+                    } else {
+                        $btn.removeClass('text-amber-400');
+                        $icon.removeClass('fill-amber-400');
+                    }
+                    if (window.Admin && window.Admin.toast) {
+                        Admin.toast({ type: 'success', title: 'Featured Updated', message: data.message });
+                    }
+                }
+            },
+            error: function() {
+                if (window.Admin && window.Admin.toast) {
+                    Admin.toast({ type: 'error', title: 'Server Error', message: 'Could not update featured flag.' });
+                }
+            }
+        });
+    }
+
+    // SweetAlert2 Delete Confirmation with jQuery
     function confirmBrandDelete(id, name, productsCount) {
         if (productsCount > 0) {
             Swal.fire({
@@ -355,9 +353,7 @@
                 confirmButtonText: 'Yes, delete',
                 confirmButtonColor: '#dc2626',
                 onConfirm: () => {
-                    const form = document.getElementById('delete-brand-form');
-                    form.action = `/admin/brands/${id}`;
-                    form.submit();
+                    $('#delete-brand-form').attr('action', `/admin/brands/${id}`).trigger('submit');
                 }
             });
         }

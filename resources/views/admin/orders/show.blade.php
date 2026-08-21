@@ -237,38 +237,38 @@
 <script>
     function handleStatusFormSubmit(e) {
         e.preventDefault();
-        const status = document.getElementById('order-status-select').value;
-        const paymentStatus = document.getElementById('order-payment-status-select').value;
+        const status = $('#order-status-select').val();
+        const paymentStatus = $('#order-payment-status-select').val();
+        const token = $('meta[name="csrf-token"]').attr('content');
 
-        Promise.all([
-            fetch("{{ route('admin.orders.update-status', $order) }}", {
-                method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ status: status })
-            }).then(r => r.json()),
-            fetch("{{ route('admin.orders.update-payment-status', $order) }}", {
-                method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ payment_status: paymentStatus })
-            }).then(r => r.json())
-        ])
-        .then(([statusRes, paymentRes]) => {
-            if (statusRes.success && paymentRes.success) {
+        const req1 = $.ajax({
+            url: "{{ route('admin.orders.update-status', $order) }}",
+            type: 'POST',
+            headers: { 'X-CSRF-TOKEN': token },
+            contentType: 'application/json',
+            dataType: 'json',
+            data: JSON.stringify({ status: status })
+        });
+
+        const req2 = $.ajax({
+            url: "{{ route('admin.orders.update-payment-status', $order) }}",
+            type: 'POST',
+            headers: { 'X-CSRF-TOKEN': token },
+            contentType: 'application/json',
+            dataType: 'json',
+            data: JSON.stringify({ payment_status: paymentStatus })
+        });
+
+        $.when(req1, req2).done(function(statusRes, paymentRes) {
+            const data1 = statusRes[0];
+            const data2 = paymentRes[0];
+            if (data1.success && data2.success) {
                 if (window.Admin && window.Admin.toast) {
                     Admin.toast({ type: 'success', title: 'Order Updated', message: 'Order status and payment updated successfully.' });
                 }
                 setTimeout(() => window.location.reload(), 600);
             }
-        })
-        .catch(err => {
+        }).fail(function() {
             if (window.Admin && window.Admin.toast) {
                 Admin.toast({ type: 'error', title: 'Server Error', message: 'Could not update order status.' });
             }

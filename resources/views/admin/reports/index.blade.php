@@ -319,7 +319,7 @@
 @push('scripts')
 <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
+    $(function () {
         const chartDates = {!! $chartDates !!};
         const chartRevenues = {!! $chartRevenues !!};
         const chartOrders = {!! $chartOrders !!};
@@ -401,7 +401,7 @@
             }
         };
 
-        const timelineChart = new ApexCharts(document.querySelector("#revenue-timeline-chart"), timelineOptions);
+        const timelineChart = new ApexCharts($('#revenue-timeline-chart')[0], timelineOptions);
         timelineChart.render();
 
         // 2. Category Revenue Breakdown Donut Chart
@@ -446,14 +446,14 @@
                 }
             };
 
-            const donutChart = new ApexCharts(document.querySelector("#category-donut-chart"), donutOptions);
+            const donutChart = new ApexCharts($('#category-donut-chart')[0], donutOptions);
             donutChart.render();
         } else {
-            document.querySelector("#category-donut-chart").innerHTML = `
+            $('#category-donut-chart').html(`
                 <div class="text-center py-12 text-slate-400 text-xs">
                     <p>No category revenue data in this period</p>
                 </div>
-            `;
+            `);
         }
     });
 </script>

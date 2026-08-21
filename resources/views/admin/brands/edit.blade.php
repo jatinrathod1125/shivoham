@@ -185,7 +185,7 @@
 
 @push('scripts')
 <script>
-    // SweetAlert2 Delete Confirmation
+    // SweetAlert2 Delete Confirmation with jQuery
     function confirmBrandDelete(id, name, productsCount) {
         if (productsCount > 0) {
             Swal.fire({
@@ -205,9 +205,7 @@
                 confirmButtonText: 'Yes, delete',
                 confirmButtonColor: '#dc2626',
                 onConfirm: () => {
-                    const form = document.getElementById('delete-brand-form');
-                    form.action = `/admin/brands/${id}`;
-                    form.submit();
+                    $('#delete-brand-form').attr('action', `/admin/brands/${id}`).trigger('submit');
                 }
             });
         }

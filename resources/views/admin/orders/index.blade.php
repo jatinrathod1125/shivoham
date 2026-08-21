@@ -310,38 +310,40 @@
 
 @push('scripts')
 <script>
-    // AJAX Order Fulfillment Status update
+    // AJAX Order Fulfillment Status update with jQuery
     function updateOrderStatus(id, newStatus, selectElement) {
-        fetch(`/admin/orders/${id}/update-status`, {
-            method: 'POST',
+        const $select = $(selectElement);
+        $.ajax({
+            url: `/admin/orders/${id}/update-status`,
+            type: 'POST',
             headers: {
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             },
-            body: JSON.stringify({ status: newStatus })
-        })
-        .then(res => res.json())
-        .then(data => {
-            if (data.success) {
-                // Update select element colors
-                selectElement.className = 'py-1 px-2.5 rounded-lg text-xs font-bold uppercase transition-colors border cursor-pointer ' +
-                    (newStatus === 'delivered' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' :
-                    (newStatus === 'processing' ? 'bg-sky-50 text-sky-700 border-sky-200' :
-                    (newStatus === 'cancelled' ? 'bg-rose-50 text-rose-700 border-rose-200' : 'bg-amber-50 text-amber-700 border-amber-200')));
+            contentType: 'application/json',
+            dataType: 'json',
+            data: JSON.stringify({ status: newStatus }),
+            success: function(data) {
+                if (data.success) {
+                    // Update select element colors
+                    const colorClass = (newStatus === 'delivered' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' :
+                        (newStatus === 'processing' ? 'bg-sky-50 text-sky-700 border-sky-200' :
+                        (newStatus === 'cancelled' ? 'bg-rose-50 text-rose-700 border-rose-200' : 'bg-amber-50 text-amber-700 border-amber-200')));
 
-                if (window.Admin && window.Admin.toast) {
-                    Admin.toast({ type: 'success', title: 'Order Updated', message: data.message });
+                    $select.attr('class', 'py-1 px-2.5 rounded-lg text-xs font-bold uppercase transition-colors border cursor-pointer ' + colorClass);
+
+                    if (window.Admin && window.Admin.toast) {
+                        Admin.toast({ type: 'success', title: 'Order Updated', message: data.message });
+                    }
+                } else {
+                    if (window.Admin && window.Admin.toast) {
+                        Admin.toast({ type: 'error', title: 'Error', message: data.message || 'Failed to update order status.' });
+                    }
                 }
-            } else {
+            },
+            error: function() {
                 if (window.Admin && window.Admin.toast) {
-                    Admin.toast({ type: 'error', title: 'Error', message: data.message || 'Failed to update order status.' });
+                    Admin.toast({ type: 'error', title: 'Server Error', message: 'Could not connect to server.' });
                 }
-            }
-        })
-        .catch(err => {
-            if (window.Admin && window.Admin.toast) {
-                Admin.toast({ type: 'error', title: 'Server Error', message: 'Could not connect to server.' });
             }
         });
     }

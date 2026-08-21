@@ -491,122 +491,121 @@
 
 @push('scripts')
 <script>
-    // AJAX Quick Status Toggle
+    // AJAX Quick Status Toggle with jQuery
     function toggleProductStatus(id, checkbox) {
-        const url = `/admin/products/${id}/toggle-status`;
-        fetch(url, {
-            method: 'POST',
+        const $checkbox = $(checkbox);
+        $.ajax({
+            url: `/admin/products/${id}/toggle-status`,
+            type: 'POST',
             headers: {
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            }
-        })
-        .then(res => res.json())
-        .then(data => {
-            if (data.success) {
-                if (window.Admin && window.Admin.toast) {
-                    Admin.toast({ type: 'success', title: 'Status Updated', message: data.message });
-                }
-            } else {
-                checkbox.checked = !checkbox.checked;
-                if (window.Admin && window.Admin.toast) {
-                    Admin.toast({ type: 'error', title: 'Error', message: data.message || 'Failed to update status.' });
-                }
-            }
-        })
-        .catch(err => {
-            checkbox.checked = !checkbox.checked;
-            if (window.Admin && window.Admin.toast) {
-                Admin.toast({ type: 'error', title: 'Server Error', message: 'Could not connect to server.' });
-            }
-        });
-    }
-
-    // AJAX Quick Featured Toggle
-    function toggleProductFeatured(id, btn) {
-        const url = `/admin/products/${id}/toggle-featured`;
-        fetch(url, {
-            method: 'POST',
-            headers: {
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            }
-        })
-        .then(res => res.json())
-        .then(data => {
-            if (data.success) {
-                const icon = btn.querySelector('svg, i');
-                if (data.is_featured) {
-                    btn.classList.add('text-amber-400');
-                    if (icon) icon.classList.add('fill-amber-400');
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            dataType: 'json',
+            success: function(data) {
+                if (data.success) {
+                    if (window.Admin && window.Admin.toast) {
+                        Admin.toast({ type: 'success', title: 'Status Updated', message: data.message });
+                    }
                 } else {
-                    btn.classList.remove('text-amber-400');
-                    if (icon) icon.classList.remove('fill-amber-400');
+                    $checkbox.prop('checked', !$checkbox.prop('checked'));
+                    if (window.Admin && window.Admin.toast) {
+                        Admin.toast({ type: 'error', title: 'Error', message: data.message || 'Failed to update status.' });
+                    }
                 }
+            },
+            error: function() {
+                $checkbox.prop('checked', !$checkbox.prop('checked'));
                 if (window.Admin && window.Admin.toast) {
-                    Admin.toast({ type: 'success', title: 'Featured Updated', message: data.message });
+                    Admin.toast({ type: 'error', title: 'Server Error', message: 'Could not connect to server.' });
                 }
-            }
-        })
-        .catch(err => {
-            if (window.Admin && window.Admin.toast) {
-                Admin.toast({ type: 'error', title: 'Server Error', message: 'Could not update featured flag.' });
             }
         });
     }
 
-    // Quick Stock Adjustment Modal Controls
+    // AJAX Quick Featured Toggle with jQuery
+    function toggleProductFeatured(id, btn) {
+        const $btn = $(btn);
+        $.ajax({
+            url: `/admin/products/${id}/toggle-featured`,
+            type: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            dataType: 'json',
+            success: function(data) {
+                if (data.success) {
+                    const $icon = $btn.find('svg, i');
+                    if (data.is_featured) {
+                        $btn.addClass('text-amber-400');
+                        $icon.addClass('fill-amber-400');
+                    } else {
+                        $btn.removeClass('text-amber-400');
+                        $icon.removeClass('fill-amber-400');
+                    }
+                    if (window.Admin && window.Admin.toast) {
+                        Admin.toast({ type: 'success', title: 'Featured Updated', message: data.message });
+                    }
+                }
+            },
+            error: function() {
+                if (window.Admin && window.Admin.toast) {
+                    Admin.toast({ type: 'error', title: 'Server Error', message: 'Could not update featured flag.' });
+                }
+            }
+        });
+    }
+
+    // Quick Stock Adjustment Modal Controls with jQuery
     function openQuickStockModal(id, name, currentStock, unit) {
-        document.getElementById('modal-product-id').value = id;
-        document.getElementById('modal-product-name').textContent = name;
-        document.getElementById('modal-product-unit').textContent = unit || 'units';
-        document.getElementById('modal-quantity-input').value = currentStock;
-        document.getElementById('modal-reason-input').value = '';
-        document.getElementById('quick-stock-modal').classList.remove('hidden');
+        $('#modal-product-id').val(id);
+        $('#modal-product-name').text(name);
+        $('#modal-product-unit').text(unit || 'units');
+        $('#modal-quantity-input').val(currentStock);
+        $('#modal-reason-input').val('');
+        $('#quick-stock-modal').removeClass('hidden');
     }
 
     function closeQuickStockModal() {
-        document.getElementById('quick-stock-modal').classList.add('hidden');
+        $('#quick-stock-modal').addClass('hidden');
     }
 
     function handleQuickStockSubmit(e) {
         e.preventDefault();
-        const id = document.getElementById('modal-product-id').value;
-        const form = document.getElementById('quick-stock-form');
-        const formData = new FormData(form);
+        const id = $('#modal-product-id').val();
+        const formData = new FormData($('#quick-stock-form')[0]);
 
-        fetch(`/admin/products/${id}/quick-stock`, {
-            method: 'POST',
+        $.ajax({
+            url: `/admin/products/${id}/quick-stock`,
+            type: 'POST',
             headers: {
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                'Accept': 'application/json',
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             },
-            body: formData
-        })
-        .then(res => res.json())
-        .then(data => {
-            if (data.success) {
-                closeQuickStockModal();
-                if (window.Admin && window.Admin.toast) {
-                    Admin.toast({ type: 'success', title: 'Stock Updated', message: data.message });
+            data: formData,
+            processData: false,
+            contentType: false,
+            dataType: 'json',
+            success: function(data) {
+                if (data.success) {
+                    closeQuickStockModal();
+                    if (window.Admin && window.Admin.toast) {
+                        Admin.toast({ type: 'success', title: 'Stock Updated', message: data.message });
+                    }
+                    setTimeout(() => window.location.reload(), 600);
+                } else {
+                    if (window.Admin && window.Admin.toast) {
+                        Admin.toast({ type: 'error', title: 'Error', message: data.message || 'Failed to update stock.' });
+                    }
                 }
-                setTimeout(() => window.location.reload(), 600);
-            } else {
+            },
+            error: function() {
                 if (window.Admin && window.Admin.toast) {
-                    Admin.toast({ type: 'error', title: 'Error', message: data.message || 'Failed to update stock.' });
+                    Admin.toast({ type: 'error', title: 'Server Error', message: 'Could not connect to server.' });
                 }
-            }
-        })
-        .catch(err => {
-            if (window.Admin && window.Admin.toast) {
-                Admin.toast({ type: 'error', title: 'Server Error', message: 'Could not connect to server.' });
             }
         });
     }
 
-    // SweetAlert2 Delete Confirmation
+    // SweetAlert2 Delete Confirmation with jQuery
     function confirmProductDelete(id, name, ordersCount) {
         if (ordersCount > 0) {
             Swal.fire({
@@ -626,9 +625,7 @@
                 confirmButtonText: 'Yes, delete',
                 confirmButtonColor: '#dc2626',
                 onConfirm: () => {
-                    const form = document.getElementById('delete-product-form');
-                    form.action = `/admin/products/${id}`;
-                    form.submit();
+                    $('#delete-product-form').attr('action', `/admin/products/${id}`).trigger('submit');
                 }
             });
         }

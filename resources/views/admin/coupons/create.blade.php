@@ -219,7 +219,7 @@
         const prefixes = ['SAVE', 'FRESH', 'GROCERY', 'ORGANIC', 'DEAL', 'SUPER'];
         const randomPrefix = prefixes[Math.floor(Math.random() * prefixes.length)];
         const randomNum = Math.floor(10 + Math.random() * 90);
-        document.getElementById('coupon-code-input').value = `${randomPrefix}${randomNum}`;
+        $('#coupon-code-input').val(`${randomPrefix}${randomNum}`);
     }
 </script>
 @endpush
