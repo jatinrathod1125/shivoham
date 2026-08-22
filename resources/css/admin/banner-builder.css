@@ -1,0 +1,112 @@
+/**
+ * Visual Banner Builder CSS Styles
+ * Handles canvas scaling, selection boxes, 8-point resize handles, and element styles.
+ */
+
+.builder-element {
+    position: absolute;
+    box-sizing: border-box;
+    cursor: move;
+    user-select: none;
+    transition: outline 0.15s ease, box-shadow 0.15s ease;
+}
+
+.builder-element:hover {
+    outline: 1.5px dashed rgba(16, 185, 129, 0.6);
+}
+
+.builder-element.is-selected {
+    outline: 2px solid #10b981 !important;
+    box-shadow: 0 0 0 1px rgba(16, 185, 129, 0.4), 0 8px 24px -4px rgba(0, 0, 0, 0.3);
+    z-index: 9999 !important;
+}
+
+.builder-element.is-locked {
+    cursor: not-allowed !important;
+}
+
+/* Resize Handles Container */
+.builder-element-handles {
+    display: none;
+    position: absolute;
+    inset: -6px;
+    pointer-events: none;
+}
+
+.builder-element.is-selected .builder-element-handles {
+    display: block;
+}
+
+/* Individual Handle Points (8-direction + rotate) */
+.handle-point {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    background-color: #ffffff;
+    border: 2px solid #10b981;
+    border-radius: 2px;
+    pointer-events: auto;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+    transition: transform 0.1s ease, background-color 0.1s ease;
+}
+
+.handle-point:hover {
+    background-color: #10b981;
+    transform: scale(1.3);
+}
+
+.handle-nw { top: -5px; left: -5px; cursor: nwse-resize; }
+.handle-n  { top: -5px; left: 50%; transform: translateX(-50%); cursor: ns-resize; }
+.handle-ne { top: -5px; right: -5px; cursor: nesw-resize; }
+.handle-e  { top: 50%; right: -5px; transform: translateY(-50%); cursor: ew-resize; }
+.handle-se { bottom: -5px; right: -5px; cursor: nwse-resize; }
+.handle-s  { bottom: -5px; left: 50%; transform: translateX(-50%); cursor: ns-resize; }
+.handle-sw { bottom: -5px; left: -5px; cursor: nesw-resize; }
+.handle-w  { top: 50%; left: -5px; transform: translateY(-50%); cursor: ew-resize; }
+
+.handle-rot {
+    top: -24px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-radius: 9999px;
+    background-color: #047857;
+    border-color: #ffffff;
+    cursor: grab;
+}
+
+.handle-rot::after {
+    content: '';
+    position: absolute;
+    top: 8px;
+    left: 50%;
+    width: 1.5px;
+    height: 14px;
+    background-color: #10b981;
+    transform: translateX(-50%);
+}
+
+/* Product Card in Canvas */
+.canvas-product-card {
+    background: rgba(15, 23, 42, 0.85);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 16px;
+    box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.5);
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 14px 18px;
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+}
+
+.canvas-product-card img {
+    width: 72px;
+    height: 72px;
+    border-radius: 12px;
+    object-fit: cover;
+    background-color: #0f172a;
+    flex-shrink: 0;
+}

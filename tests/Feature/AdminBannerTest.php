@@ -140,4 +140,64 @@ class AdminBannerTest extends TestCase
         $response->assertSessionHas('toast_success');
         $this->assertDatabaseMissing('banners', ['id' => $banner->id]);
     }
+
+    /**
+     * Test banner visual design config serialization and fallback.
+     */
+    public function test_banner_design_config_architecture(): void
+    {
+        // 1. Test fallback when design_config is null
+        $banner = Banner::factory()->create([
+            'title' => 'Spring Farm Promo',
+            'subtitle' => 'Exclusive discounts on green produce',
+            'link' => '/categories/greens',
+            'design_config' => null,
+        ]);
+
+        $effective = $banner->effective_design_config;
+        $this->assertIsArray($effective);
+        $this->assertEquals(1920, $effective['canvas']['width']);
+        $this->assertEquals(700, $effective['canvas']['height']);
+        $this->assertCount(3, $effective['elements']);
+        $this->assertEquals('text', $effective['elements'][0]['type']);
+        $this->assertEquals('Spring Farm Promo', $effective['elements'][0]['content']);
+
+        // 2. Test saving and retrieving custom design configuration
+        $customDesign = [
+            'canvas' => [
+                'width' => 1920,
+                'height' => 700,
+                'backgroundColor' => '#1e293b',
+                'backgroundImage' => '/storage/banners/custom.jpg',
+            ],
+            'elements' => [
+                [
+                    'id' => 'elem-1',
+                    'type' => 'text',
+                    'content' => 'Flash 50% Off Mega Sale',
+                    'x' => 10,
+                    'y' => 20,
+                    'width' => 60,
+                    'height' => 18,
+                    'rotation' => 0,
+                    'zIndex' => 10,
+                    'visible' => true,
+                    'locked' => false,
+                    'style' => [
+                        'fontFamily' => 'Inter',
+                        'fontSize' => 56,
+                        'fontWeight' => 800,
+                        'color' => '#ffffff',
+                    ],
+                ],
+            ],
+        ];
+
+        $banner->update(['design_config' => $customDesign]);
+        $fresh = $banner->fresh();
+
+        $this->assertIsArray($fresh->design_config);
+        $this->assertEquals('#1e293b', $fresh->design_config['canvas']['backgroundColor']);
+        $this->assertEquals('Flash 50% Off Mega Sale', $fresh->effective_design_config['elements'][0]['content']);
+    }
 }

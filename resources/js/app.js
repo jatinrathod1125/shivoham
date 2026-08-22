@@ -34,6 +34,22 @@ window.renderLucideIcons = renderLucideIcons;
 import './admin/common.js';
 import './admin/layout.js';
 import './admin/dashboard.js';
+import './admin/banner-builder/fonts.js';
+import './admin/banner-builder/shapes-library.js';
+import './admin/banner-builder/palettes.js';
+import './admin/banner-builder/state.js';
+import './admin/banner-builder/renderer.js';
+import './admin/banner-builder/selection.js';
+import './admin/banner-builder/transformer.js';
+import './admin/banner-builder/templates.js';
+import './admin/banner-builder/inserter.js';
+import './admin/banner-builder/history.js';
+import './admin/banner-builder/viewport.js';
+import './admin/banner-builder/floating-toolbar.js';
+import './admin/banner-builder/aligner.js';
+import './admin/banner-builder/preview.js';
+import './admin/banner-builder/exporter.js';
+import './admin/banner-builder/saver.js';
 
 // Render icons at multiple lifecycle hooks to guarantee rendering
 renderLucideIcons();
