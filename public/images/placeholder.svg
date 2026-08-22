@@ -1,9 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="400" height="400">
-  <rect width="400" height="400" fill="#1e293b"/>
-  <g fill="none" stroke="#475569" stroke-width="8" stroke-linecap="round" stroke-linejoin="round">
-    <rect x="80" y="80" width="240" height="240" rx="24" fill="#0f172a" stroke="#334155"/>
-    <circle cx="150" cy="150" r="24" fill="#334155"/>
-    <path d="M90 280 L180 190 L240 250 L270 220 L310 260" stroke="#475569"/>
-  </g>
-  <text x="200" y="355" fill="#64748b" font-family="system-ui, sans-serif" font-size="18" font-weight="600" text-anchor="middle">Grocery Item</text>
-</svg>

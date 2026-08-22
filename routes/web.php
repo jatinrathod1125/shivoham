@@ -1,7 +1,6 @@
 <?php
 
 use App\Http\Controllers\Admin\AuthController;
-use App\Http\Controllers\Admin\BannerBuilderController;
 use App\Http\Controllers\Admin\BannerController;
 use App\Http\Controllers\Admin\BrandController;
 use App\Http\Controllers\Admin\CategoryController;
@@ -95,10 +94,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::post('/coupons/{coupon}/toggle-status', [CouponController::class, 'toggleStatus'])->name('coupons.toggle-status');
         Route::resource('coupons', CouponController::class)->names('coupons');
 
-        // Promotional Banners & Visual Builder Management
-        Route::get('/banners/{banner}/builder', [BannerBuilderController::class, 'show'])->name('banners.builder');
-        Route::match(['PUT', 'POST'], '/banners/{banner}/builder', [BannerBuilderController::class, 'save'])->name('banners.builder.save');
-        Route::post('/banners/{banner}/builder/upload-asset', [BannerBuilderController::class, 'uploadAsset'])->name('banners.builder.upload-asset');
+        // Promotional Banners & Sliders Management
         Route::post('/banners/{banner}/toggle-status', [BannerController::class, 'toggleStatus'])->name('banners.toggle-status');
         Route::resource('banners', BannerController::class)->names('banners');
 

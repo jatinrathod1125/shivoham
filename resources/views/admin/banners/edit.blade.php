@@ -12,15 +12,6 @@
     >
         <x-slot:actions>
             <x-admin.button
-                :href="route('admin.banners.builder', $banner)"
-                variant="primary"
-                size="sm"
-                icon="palette"
-            >
-                Open Visual Builder
-            </x-admin.button>
-
-            <x-admin.button
                 :href="route('admin.banners.index')"
                 variant="outline"
                 size="sm"

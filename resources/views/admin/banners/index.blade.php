@@ -277,14 +277,6 @@
                             <!-- Actions -->
                             <td class="px-5 py-3.5 text-right whitespace-nowrap">
                                 <div class="flex items-center justify-end gap-1.5">
-                                    <a
-                                        href="{{ route('admin.banners.builder', $banner) }}"
-                                        class="p-1.5 rounded-lg text-slate-500 hover:text-purple-600 hover:bg-purple-50 transition-colors"
-                                        title="Open Visual Builder"
-                                    >
-                                        <i data-lucide="palette" class="w-4 h-4"></i>
-                                    </a>
-
                                     <button
                                         type="button"
                                         onclick="openBannerPreview('{{ addslashes($banner->title) }}', '{{ addslashes($banner->subtitle ?? '') }}', '{{ $banner->image }}', '{{ $banner->position }}', '{{ $banner->link }}')"
@@ -305,7 +297,7 @@
                                     <button
                                         type="button"
                                         onclick="confirmBannerDelete({{ $banner->id }}, '{{ addslashes($banner->title) }}')"
-                                        class="p-1.5 rounded-lg text-slate-500 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
+                                        class="p-1.5 rounded-lg text-slate-500 hover:text-rose-600 hover:bg-rose-50 transition-colors"
                                         title="Delete Banner"
                                     >
                                         <i data-lucide="trash-2" class="w-4 h-4"></i>
