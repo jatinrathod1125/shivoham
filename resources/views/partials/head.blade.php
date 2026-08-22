@@ -21,5 +21,8 @@
     }
 </style>
 
+<!-- jQuery (Synchronous load for inline script compatibility) -->
+<script src="{{ asset('js/jquery.min.js') }}"></script>
+
 <!-- Vite Styles & Scripts -->
 @vite(['resources/css/app.css', 'resources/js/app.js'])

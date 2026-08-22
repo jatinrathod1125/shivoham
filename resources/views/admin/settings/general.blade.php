@@ -136,8 +136,14 @@
 @push('scripts')
 <script>
     $(function () {
-        $('#logo-dropzone').on('click', function () {
-            $('#logo-file-input').trigger('click');
+        $('#logo-dropzone').on('click', function (e) {
+            if (e.target !== document.getElementById('logo-file-input')) {
+                $('#logo-file-input').trigger('click');
+            }
+        });
+
+        $('#logo-file-input').on('click', function (e) {
+            e.stopPropagation();
         });
 
         $('#logo-file-input').on('change', function () {
