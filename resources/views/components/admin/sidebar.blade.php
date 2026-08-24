@@ -1,6 +1,9 @@
 @php
     $currentRoute = request()->route() ? request()->route()->getName() : '';
     $currentPath = request()->path();
+    $storeLogo =
+        \App\Models\Setting::get('store_logo') ?? (config('admin.logo.dark_sidebar') ?? config('admin.logo.full'));
+    $storeName = \App\Models\Setting::get('store_name') ?? config('admin.name', 'Grocery Admin');
 
     $navGroups = [
         [
@@ -146,19 +149,21 @@
 <aside
     {{ $attributes->merge(['class' => 'w-64 bg-slate-900 text-slate-300 flex flex-col shrink-0 border-r border-slate-800 select-none h-screen sticky top-0']) }}>
     <!-- Brand Header -->
-    <div class="h-16 flex items-center justify-between px-6 border-b border-slate-800/80 bg-slate-950/40">
+    <div class="py-5 px-4 flex items-center justify-center bg-white border-b border-slate-200/90 shadow-xs">
         <a href="{{ \Illuminate\Support\Facades\Route::has('admin.dashboard') ? route('admin.dashboard') : url('/') }}"
-            class="flex items-center gap-3 group">
-            <div
-                class="w-9 h-9 rounded-xl bg-emerald-600 flex items-center justify-center text-white shadow-lg shadow-emerald-900/30 group-hover:bg-emerald-500 transition-colors">
-                <i data-lucide="shopping-cart" class="w-5 h-5"></i>
-            </div>
-            <div class="min-w-0">
-                <h1 class="text-sm font-bold text-white tracking-tight truncate">
-                    {{ config('admin.name', 'Grocery Admin') }}</h1>
-                <p class="text-[11px] text-emerald-400 font-medium truncate">
-                    {{ config('admin.store_name', 'Fresh Hub') }}</p>
-            </div>
+            class="flex items-center justify-center w-full group">
+            @if ($storeLogo)
+                <img src="{{ $storeLogo }}" alt="{{ $storeName }}"
+                    class="h-16 max-h-20 max-w-[210px] w-auto object-contain transition-transform duration-200 group-hover:scale-105 mx-auto" />
+            @else
+                <div class="flex flex-col items-center justify-center gap-2 text-center">
+                    <div
+                        class="w-12 h-12 rounded-2xl bg-emerald-600 flex items-center justify-center text-white shadow-md shadow-emerald-900/30 group-hover:bg-emerald-500 transition-colors">
+                        <i data-lucide="shopping-cart" class="w-6 h-6"></i>
+                    </div>
+                    <span class="text-sm font-bold text-slate-900 tracking-tight">{{ $storeName }}</span>
+                </div>
+            @endif
         </a>
     </div>
 

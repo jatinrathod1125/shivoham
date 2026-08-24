@@ -42,7 +42,7 @@ class SettingController extends Controller
             'store_phone' => ['nullable', 'string', 'max:50'],
             'store_address' => ['nullable', 'string', 'max:255'],
             'support_hours' => ['nullable', 'string', 'max:100'],
-            'store_logo' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp,svg', 'max:2048'],
+            'store_logo' => ['nullable', 'file', 'mimes:jpg,jpeg,png,webp,svg', 'max:10240'],
         ]);
 
         Setting::set('store_name', $validated['store_name'], 'general', 'string');
@@ -53,6 +53,12 @@ class SettingController extends Controller
         Setting::set('support_hours', $validated['support_hours'] ?? '', 'general', 'string');
 
         if ($request->hasFile('store_logo')) {
+            $oldLogo = Setting::get('store_logo');
+            if ($oldLogo && \Illuminate\Support\Str::startsWith($oldLogo, '/storage/')) {
+                $oldPath = str_replace('/storage/', '', $oldLogo);
+                Storage::disk('public')->delete($oldPath);
+            }
+
             $path = $request->file('store_logo')->store('settings', 'public');
             Setting::set('store_logo', Storage::url($path), 'general', 'string');
         }

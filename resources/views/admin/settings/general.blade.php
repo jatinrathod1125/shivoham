@@ -92,25 +92,21 @@
                                 accept="image/*"
                                 class="hidden"
                             />
-                            @if($settings['store_logo'])
-                                <div id="logo-preview-box">
-                                    <img id="logo-preview-img" src="{{ $settings['store_logo'] }}" alt="Store Logo" class="h-20 max-w-full object-contain mx-auto rounded-lg" />
-                                    <p class="text-[10px] text-emerald-600 font-semibold mt-2">Click to replace logo</p>
+                            <div id="logo-placeholder" class="{{ $settings['store_logo'] ? 'hidden' : '' }} space-y-1.5 py-4">
+                                <div class="w-10 h-10 rounded-full bg-slate-100 group-hover:bg-emerald-100 text-slate-500 group-hover:text-emerald-600 flex items-center justify-center mx-auto transition-colors">
+                                    <i data-lucide="upload-cloud" class="w-5 h-5"></i>
                                 </div>
-                            @else
-                                <div id="logo-placeholder" class="space-y-1.5 py-4">
-                                    <div class="w-10 h-10 rounded-full bg-slate-100 group-hover:bg-emerald-100 text-slate-500 group-hover:text-emerald-600 flex items-center justify-center mx-auto transition-colors">
-                                        <i data-lucide="upload-cloud" class="w-5 h-5"></i>
-                                    </div>
-                                    <p class="text-xs font-semibold text-slate-700">Upload Store Logo</p>
-                                    <p class="text-[10px] text-slate-400">PNG, SVG up to 2MB</p>
-                                </div>
-                                <div id="logo-preview-box" class="hidden">
-                                    <img id="logo-preview-img" src="" alt="Store Logo Preview" class="h-20 max-w-full object-contain mx-auto rounded-lg" />
-                                    <p class="text-[10px] text-emerald-600 font-semibold mt-2">Click to replace</p>
-                                </div>
-                            @endif
+                                <p class="text-xs font-semibold text-slate-700">Upload Store Logo</p>
+                                <p class="text-[10px] text-slate-400">PNG, SVG, JPG, WebP up to 10MB</p>
+                            </div>
+                            <div id="logo-preview-box" class="{{ $settings['store_logo'] ? '' : 'hidden' }}">
+                                <img id="logo-preview-img" src="{{ $settings['store_logo'] ?? '' }}" alt="Store Logo" class="h-20 max-w-full object-contain mx-auto rounded-lg" />
+                                <p class="text-[10px] text-emerald-600 font-semibold mt-2">Click to replace logo</p>
+                            </div>
                         </div>
+                        @error('store_logo')
+                            <p class="text-xs text-rose-500 font-medium mt-1">{{ $message }}</p>
+                        @enderror
                     </div>
                 </x-admin.card>
 
