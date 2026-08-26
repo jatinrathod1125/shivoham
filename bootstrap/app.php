@@ -23,4 +23,17 @@ return Application::configure(basePath: dirname(__DIR__))
         $exceptions->shouldRenderJsonWhen(
             fn (Request $request) => $request->is('api/*') || $request->expectsJson(),
         );
+
+        $exceptions->render(function (\Illuminate\Http\Exceptions\PostTooLargeException $e, Request $request) {
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'The uploaded file is too large. Maximum allowed size is 500MB.',
+                ], 413);
+            }
+
+            return redirect()->back()
+                ->withInput()
+                ->with('toast_error', 'The uploaded file exceeds the allowed upload limit (500MB).');
+        });
     })->create();
