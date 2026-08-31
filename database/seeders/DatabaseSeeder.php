@@ -22,7 +22,6 @@ class DatabaseSeeder extends Seeder
             InventoryTransactionSeeder::class,
             CouponSeeder::class,
             OfferSeeder::class,
-            BannerSeeder::class,
         ]);
     }
 }

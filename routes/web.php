@@ -1,7 +1,6 @@
 <?php
 
 use App\Http\Controllers\Admin\AuthController;
-use App\Http\Controllers\Admin\BannerController;
 use App\Http\Controllers\Admin\BrandController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\CouponController;
@@ -93,20 +92,6 @@ Route::prefix('admin')->name('admin.')->group(function () {
         // Coupon Codes Management
         Route::post('/coupons/{coupon}/toggle-status', [CouponController::class, 'toggleStatus'])->name('coupons.toggle-status');
         Route::resource('coupons', CouponController::class)->names('coupons');
-
-        // Promotional Banners & Universal AI Banner Engine Management
-        Route::get('/banners/import', [BannerController::class, 'importForm'])->name('banners.import');
-        Route::post('/banners/import', [BannerController::class, 'importProcess'])->name('banners.import.process');
-        Route::get('/banners/{banner}/editor', [BannerController::class, 'editor'])->name('banners.editor');
-        Route::get('/banners/{banner}/versions', [BannerController::class, 'versions'])->name('banners.versions');
-        Route::post('/banners/{banner}/versions/{version}/rollback', [BannerController::class, 'rollback'])->name('banners.rollback');
-        Route::post('/banners/{banner}/versions/{version}/publish', [BannerController::class, 'publishVersion'])->name('banners.publish-version');
-        Route::post('/banners/{banner}/update-fields', [BannerController::class, 'updateFields'])->name('banners.update-fields');
-        Route::post('/banners/{banner}/reanalyze', [BannerController::class, 'reanalyze'])->name('banners.reanalyze');
-        Route::get('/banners/{banner}/preview', [BannerController::class, 'preview'])->name('banners.preview');
-        Route::post('/banners/{banner}/fields/{field}/role', [BannerController::class, 'updateFieldRole'])->name('banners.fields.role');
-        Route::post('/banners/{banner}/toggle-status', [BannerController::class, 'toggleStatus'])->name('banners.toggle-status');
-        Route::resource('banners', BannerController::class)->names('banners');
 
         // Analytics & Business Reports
         Route::get('/reports/export', [ReportController::class, 'exportCsv'])->name('reports.export');

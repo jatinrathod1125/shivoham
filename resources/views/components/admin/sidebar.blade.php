@@ -108,12 +108,12 @@
                     'active' => request()->is('admin/coupons*'),
                 ],
                 [
-                    'title' => 'Banners',
-                    'icon' => 'image',
-                    'url' => \Illuminate\Support\Facades\Route::has('admin.banners.index')
-                        ? route('admin.banners.index')
-                        : url('/admin/banners'),
-                    'active' => request()->is('admin/banners*'),
+                    'title' => 'Campaigns',
+                    'icon' => 'sparkles',
+                    'url' => \Illuminate\Support\Facades\Route::has('admin.campaigns.index')
+                        ? route('admin.campaigns.index')
+                        : url('/admin/campaigns'),
+                    'active' => request()->is('admin/campaigns*'),
                 ],
             ],
         ],
